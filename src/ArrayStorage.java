@@ -24,14 +24,12 @@ public class ArrayStorage {
     }
 
     Resume get(String uuid) {
-        Resume resume = null;
-        for (Resume value : storage) {
-            if (value != null && value.uuid.equals(uuid)) {
-                resume = value;
-                break;
+        for (int i=0; i<storage.length; i++) {
+            if (storage[i] != null && storage[i].uuid.equals(uuid)) {
+                return storage[i];
             }
         }
-        return resume;
+        return null;
     }
 
     void delete(String uuid) {
@@ -61,6 +59,12 @@ public class ArrayStorage {
     }
 
     int size() {
-        return storage.length;
+        int count=0;
+        for(Resume r: storage){
+            if(r!=null){
+                count++;
+            }
+        }
+        return count;
     }
 }
