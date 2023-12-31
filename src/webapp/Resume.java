@@ -1,6 +1,5 @@
-/**
- * Initial resume class
- */
+package webapp;
+
 public class Resume {
 
     // Unique identifier
