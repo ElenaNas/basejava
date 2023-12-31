@@ -13,8 +13,8 @@ public class ArrayStorage {
 
     boolean containsResume(Resume r) {
         boolean b = false;
-        for (Resume res : getAll()) {
-            if (res.equals(r)) {
+        for (int i=0; i<size; i++) {
+            if (storage[i]==r) {
                 b = true;
                 break;
             }
@@ -24,8 +24,8 @@ public class ArrayStorage {
 
     boolean containsUuid(String id) {
         boolean b = false;
-        for (Resume res : getAll()) {
-            if (res.uuid.equals(id)) {
+        for (int i=0; i<size; i++) {
+            if (storage[i].uuid.equals(id)) {
                 b = true;
                 break;
             }
@@ -56,9 +56,9 @@ public class ArrayStorage {
 
     Resume get(String uuid) {
         if (containsUuid(uuid)) {
-            for (Resume res : getAll()) {
-                if (res.uuid.equals(uuid)) {
-                    return res;
+            for (int i=0; i<size; i++) {
+                if (storage[i].uuid.equals(uuid)) {
+                    return storage[i];
                 }
             }
         } else {
