@@ -3,94 +3,74 @@ package webapp;
 import java.util.Arrays;
 
 public class ArrayStorage {
-    int size;
-    Resume[] storage = new Resume[10000];
+    protected int size;
+    protected int index;
+    protected final Resume[] storage = new Resume[10000];
 
-    void clear() {
+    protected void clear() {
         Arrays.fill(getAll(), null);
         size = 0;
     }
 
-    boolean containsResume(Resume r) {
-        boolean b = false;
-        for (int i=0; i<size; i++) {
-            if (storage[i]==r) {
-                b = true;
-                break;
+    protected int findIndex(String uuid) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].uuid.equals(uuid)) {
+                index = i;
+                return index;
             }
         }
-        return b;
+        return -1;
     }
 
-    boolean containsUuid(String id) {
-        boolean b = false;
-        for (int i=0; i<size; i++) {
-            if (storage[i].uuid.equals(id)) {
-                b = true;
-                break;
+    protected void update(Resume r) {
+        if (findIndex(r.uuid) > -1) {
+            for (int i = 0; i < size; i++) {
+                if (storage[i].uuid.equals(r.uuid)) {
+                    storage[i] = r;
+                    System.out.println("Resume " + r + " has been updated");
+                    break;
+                }
             }
-        }
-        return b;
-    }
-
-    void update(Resume r) {
-        if (containsResume(r)) {
-            System.out.println("Resume " + r + " is available for updates.");
         } else {
             System.out.println("Resume " + r + " was not found in the storage");
         }
     }
 
-    void save(Resume r) {
-        if (containsResume(r)) {
-            System.out.println("Storage already contains resume " + r + ".");
-            return;
-        }
+    protected void save(Resume r) {
         if (size == storage.length) {
             System.out.println("Storage is full.");
-            return;
+        } else if (findIndex(r.uuid) > -1) {
+            System.out.println("Storage already contains resume " + r + ".");
+        } else {
+            storage[size] = r;
+            size++;
         }
-        storage[size] = r;
-        size++;
     }
 
-    Resume get(String uuid) {
-        if (containsUuid(uuid)) {
-            for (int i=0; i<size; i++) {
-                if (storage[i].uuid.equals(uuid)) {
-                    return storage[i];
-                }
-            }
+    protected Resume get(String uuid) {
+        if (findIndex(uuid) > -1) {
+            return storage[findIndex(uuid)];
         } else {
             System.out.println("Resume " + uuid + " was not found in the storage");
         }
         return null;
     }
 
-    void delete(String uuid) {
-        if (size == 0) {
-            System.out.println("Storage is empty, no elements available for removal");
+    protected void delete(String uuid) {
+        if (findIndex(uuid) > -1) {
+            storage[findIndex(uuid)] = storage[size - 1];
+            storage[size - 1] = null;
+            size--;
         } else {
-            if (containsUuid(uuid)) {
-                for (int i = 0; i < size; i++) {
-                    if (storage[i].uuid.equals(uuid)) {
-                        storage[i] = storage[size - 1];
-                        storage[size - 1] = null;
-                        size--;
-                        break;
-                    }
-                }
-            } else {
-                System.out.println("There's no such resume in the storage.");
-            }
+            System.out.println("There's no such resume in the storage.");
         }
     }
 
-    Resume[] getAll() {
+    protected Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    int size() {
+    protected int size() {
         return size;
     }
 }
