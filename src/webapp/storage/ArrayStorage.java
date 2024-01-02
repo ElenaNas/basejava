@@ -15,11 +15,9 @@ public class ArrayStorage {
     }
 
     public int findIndex(String uuid) {
-        int index;
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuid)) {
-                index = i;
-                return index;
+                return i;
             }
         }
         return -1;
@@ -27,19 +25,18 @@ public class ArrayStorage {
 
     public void update(Resume r) {
         int index = findIndex(r.getUuid());
-        if (index >= 0) {
+        if (index < 0) {
+            System.out.println("Resume " + r + " was not found in the storage");
+        } else {
             storage[index] = r;
             System.out.println("Resume " + r + " has been updated");
-        } else {
-            System.out.println("Resume " + r + " was not found in the storage");
         }
     }
 
     public void save(Resume r) {
-        int index = findIndex(r.getUuid());
         if (size == STORAGE_LIMIT) {
             System.out.println("Storage is full.");
-        } else if (index >= 0) {
+        } else if (findIndex(r.getUuid()) >= 0) {
             System.out.println("Storage already contains resume " + r + ".");
         } else {
             storage[size] = r;
