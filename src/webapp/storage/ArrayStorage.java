@@ -1,4 +1,6 @@
-package webapp;
+package webapp.storage;
+
+import webapp.model.Resume;
 
 import java.util.Arrays;
 
@@ -7,15 +9,15 @@ public class ArrayStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[10000];
 
-    protected void clear() {
+    public void clear() {
         Arrays.fill(getAll(), null);
         size = 0;
     }
 
-    protected int findIndex(String uuid) {
+    public int findIndex(String uuid) {
         int index;
         for (int i = 0; i < size; i++) {
-            if (storage[i].uuid.equals(uuid)) {
+            if (storage[i].getUuid().equals(uuid)) {
                 index = i;
                 return index;
             }
@@ -23,8 +25,8 @@ public class ArrayStorage {
         return -1;
     }
 
-    protected void update(Resume r) {
-        int index = findIndex(r.uuid);
+    public void update(Resume r) {
+        int index = findIndex(r.getUuid());
         if (index >= 0) {
             storage[index] = r;
             System.out.println("Resume " + r + " has been updated");
@@ -33,8 +35,8 @@ public class ArrayStorage {
         }
     }
 
-    protected void save(Resume r) {
-        int index = findIndex(r.uuid);
+    public void save(Resume r) {
+        int index = findIndex(r.getUuid());
         if (size == STORAGE_LIMIT) {
             System.out.println("Storage is full.");
         } else if (index >= 0) {
@@ -45,7 +47,7 @@ public class ArrayStorage {
         }
     }
 
-    protected Resume get(String uuid) {
+    public Resume get(String uuid) {
         int index = findIndex(uuid);
         if (index >= 0) {
             return storage[index];
@@ -55,7 +57,7 @@ public class ArrayStorage {
         return null;
     }
 
-    protected void delete(String uuid) {
+    public void delete(String uuid) {
         int index = findIndex(uuid);
         if (index >= 0) {
             storage[index] = storage[size - 1];
@@ -66,11 +68,11 @@ public class ArrayStorage {
         }
     }
 
-    protected Resume[] getAll() {
+    public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
     }
 
-    protected int size() {
+    public int size() {
         return size;
     }
 }
