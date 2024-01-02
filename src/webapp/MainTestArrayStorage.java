@@ -2,10 +2,10 @@ package webapp;
 
 import webapp.model.Resume;
 import webapp.storage.ArrayStorage;
-import webapp.storage.Storage;
+import webapp.storage.IStorage;
 
 public class MainTestArrayStorage {
-    static final Storage ARRAY_STORAGE = new ArrayStorage();
+    static final IStorage ARRAY_STORAGE = new ArrayStorage();
 
     public static void main(String[] args) {
         Resume r1 = new Resume();

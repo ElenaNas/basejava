@@ -4,10 +4,8 @@ import webapp.model.Resume;
 
 import java.util.Arrays;
 
-public class ArrayStorage implements Storage{
-    private int size;
-    private static final int STORAGE_LIMIT = 10000;
-    private final Resume[] storage = new Resume[STORAGE_LIMIT];
+public class ArrayStorage extends AbstractArrayStorage {
+
 
     public void clear() {
         Arrays.fill(storage, 0, size, null);
@@ -69,7 +67,4 @@ public class ArrayStorage implements Storage{
         return Arrays.copyOf(storage, size);
     }
 
-    public int size() {
-        return size;
-    }
 }

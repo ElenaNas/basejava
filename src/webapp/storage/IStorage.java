@@ -3,7 +3,7 @@ package webapp.storage;
 import webapp.model.Resume;
 
 
-public interface Storage {
+public interface IStorage {
     void clear();
 
     void update(Resume r);
