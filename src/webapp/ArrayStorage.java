@@ -4,7 +4,7 @@ import java.util.Arrays;
 
 public class ArrayStorage {
     protected int size;
-    protected int index;
+    protected static final int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[10000];
 
     protected void clear() {
@@ -13,6 +13,7 @@ public class ArrayStorage {
     }
 
     protected int findIndex(String uuid) {
+        int index;
         for (int i = 0; i < size; i++) {
             if (storage[i].uuid.equals(uuid)) {
                 index = i;
@@ -23,23 +24,20 @@ public class ArrayStorage {
     }
 
     protected void update(Resume r) {
-        if (findIndex(r.uuid) > -1) {
-            for (int i = 0; i < size; i++) {
-                if (storage[i].uuid.equals(r.uuid)) {
-                    storage[i] = r;
-                    System.out.println("Resume " + r + " has been updated");
-                    break;
-                }
-            }
+        int index = findIndex(r.uuid);
+        if (index >= 0) {
+            storage[index] = r;
+            System.out.println("Resume " + r + " has been updated");
         } else {
             System.out.println("Resume " + r + " was not found in the storage");
         }
     }
 
     protected void save(Resume r) {
-        if (size == storage.length) {
+        int index = findIndex(r.uuid);
+        if (size == STORAGE_LIMIT) {
             System.out.println("Storage is full.");
-        } else if (findIndex(r.uuid) > -1) {
+        } else if (index >= 0) {
             System.out.println("Storage already contains resume " + r + ".");
         } else {
             storage[size] = r;
@@ -48,8 +46,9 @@ public class ArrayStorage {
     }
 
     protected Resume get(String uuid) {
-        if (findIndex(uuid) > -1) {
-            return storage[findIndex(uuid)];
+        int index = findIndex(uuid);
+        if (index >= 0) {
+            return storage[index];
         } else {
             System.out.println("Resume " + uuid + " was not found in the storage");
         }
@@ -57,8 +56,9 @@ public class ArrayStorage {
     }
 
     protected void delete(String uuid) {
-        if (findIndex(uuid) > -1) {
-            storage[findIndex(uuid)] = storage[size - 1];
+        int index = findIndex(uuid);
+        if (index >= 0) {
+            storage[index] = storage[size - 1];
             storage[size - 1] = null;
             size--;
         } else {
