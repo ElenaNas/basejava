@@ -4,13 +4,13 @@ import webapp.model.Resume;
 
 import java.util.Arrays;
 
-public class ArrayStorage {
-    protected int size;
-    protected static final int STORAGE_LIMIT = 10000;
-    protected final Resume[] storage = new Resume[10000];
+public class ArrayStorage implements Storage{
+    private int size;
+    private static final int STORAGE_LIMIT = 10000;
+    private final Resume[] storage = new Resume[STORAGE_LIMIT];
 
     public void clear() {
-        Arrays.fill(getAll(), null);
+        Arrays.fill(storage, 0, size, null);
         size = 0;
     }
 
