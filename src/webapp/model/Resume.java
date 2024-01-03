@@ -2,10 +2,11 @@ package webapp.model;
 
 import java.util.Objects;
 
-public class Resume {
+public class Resume implements Comparable<Resume> {
 
     // Unique identifier
     private String uuid;
+
 
     @Override
     public boolean equals(Object o) {
@@ -31,5 +32,10 @@ public class Resume {
 
     public void setUuid(String uuid) {
         this.uuid = uuid;
+    }
+
+    @Override
+    public int compareTo(Resume resume) {
+        return uuid.compareTo(resume.uuid);
     }
 }

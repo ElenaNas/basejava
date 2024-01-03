@@ -17,4 +17,5 @@ public interface IStorage {
     Resume[] getAll();
 
     int size();
+
 }

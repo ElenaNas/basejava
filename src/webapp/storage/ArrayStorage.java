@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 public class ArrayStorage extends AbstractArrayStorage {
 
-
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
@@ -40,16 +39,6 @@ public class ArrayStorage extends AbstractArrayStorage {
             storage[size] = r;
             size++;
         }
-    }
-
-    public Resume get(String uuid) {
-        int index = findIndex(uuid);
-        if (index >= 0) {
-            return storage[index];
-        } else {
-            System.out.println("Resume " + uuid + " was not found in the storage");
-        }
-        return null;
     }
 
     public void delete(String uuid) {
