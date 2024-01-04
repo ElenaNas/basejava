@@ -1,15 +1,15 @@
 package webapp;
 
 import webapp.model.Resume;
-import webapp.storage.ArrayStorage;
 import webapp.storage.IStorage;
+import webapp.storage.SortedArrayStorage;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
 public class MainArray {
-    private final static IStorage ARRAY_STORAGE = new ArrayStorage();
+    private final static IStorage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) throws IOException {
         BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));

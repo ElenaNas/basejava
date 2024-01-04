@@ -2,14 +2,8 @@ package webapp.storage;
 
 import webapp.model.Resume;
 
-import java.util.Arrays;
-
 public class ArrayStorage extends AbstractArrayStorage {
 
-    public void clear() {
-        Arrays.fill(storage, 0, size, null);
-        size = 0;
-    }
 
     public int findIndex(String uuid) {
         for (int i = 0; i < size; i++) {
@@ -18,16 +12,6 @@ public class ArrayStorage extends AbstractArrayStorage {
             }
         }
         return -1;
-    }
-
-    public void update(Resume r) {
-        int index = findIndex(r.getUuid());
-        if (index < 0) {
-            System.out.println("Resume " + r + " was not found in the storage");
-        } else {
-            storage[index] = r;
-            System.out.println("Resume " + r + " has been updated");
-        }
     }
 
     public void save(Resume r) {
@@ -51,9 +35,4 @@ public class ArrayStorage extends AbstractArrayStorage {
             System.out.println("There's no such resume in the storage.");
         }
     }
-
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
-    }
-
 }

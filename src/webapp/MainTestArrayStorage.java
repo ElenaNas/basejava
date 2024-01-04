@@ -1,11 +1,11 @@
 package webapp;
 
 import webapp.model.Resume;
-import webapp.storage.ArrayStorage;
 import webapp.storage.IStorage;
+import webapp.storage.SortedArrayStorage;
 
 public class MainTestArrayStorage {
-    static final IStorage ARRAY_STORAGE = new ArrayStorage();
+    static final IStorage ARRAY_STORAGE = new SortedArrayStorage();
 
     public static void main(String[] args) {
         Resume r1 = new Resume();
@@ -26,6 +26,10 @@ public class MainTestArrayStorage {
 
         printAll();
         ARRAY_STORAGE.update(r2);
+        printAll();
+        ARRAY_STORAGE.save(r2);
+        printAll();
+        ARRAY_STORAGE.save(r3);
         printAll();
         ARRAY_STORAGE.delete(r1.getUuid());
         printAll();
