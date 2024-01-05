@@ -9,11 +9,11 @@ public abstract class AbstractArrayStorage implements IStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
 
+    protected abstract int findIndex(String uuid);
+
     public int size() {
         return size;
     }
-
-    protected abstract int findIndex(String uuid);
 
     public Resume get(String uuid) {
         int index = findIndex(uuid);
@@ -42,5 +42,27 @@ public abstract class AbstractArrayStorage implements IStorage {
     public void clear() {
         Arrays.fill(storage, 0, size, null);
         size = 0;
+    }
+
+    public void save(Resume r) {
+        if (size == STORAGE_LIMIT) {
+            System.out.println("Storage is full.");
+        } else if (findIndex(r.getUuid()) >= 0) {
+            System.out.println("Storage already contains resume " + r + ".");
+        } else {
+            storage[size] = r;
+            size++;
+        }
+    }
+
+    public void delete(String uuid) {
+        int index = findIndex(uuid);
+        if (index >= 0) {
+            storage[index] = storage[size - 1];
+            storage[size - 1] = null;
+            size--;
+        } else {
+            System.out.println("There's no such resume in the storage.");
+        }
     }
 }

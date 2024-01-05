@@ -6,7 +6,6 @@ import java.util.Arrays;
 
 public class SortedArrayStorage extends AbstractArrayStorage {
 
-
     @Override
     protected int findIndex(String uuid) {
         Resume searchIndex = new Resume();
@@ -36,7 +35,7 @@ public class SortedArrayStorage extends AbstractArrayStorage {
             size++;
         } else {
             for (int i = 0; i < size; i++) {
-                if (storage[i].getUuid().compareTo(resume.getUuid()) == 0) {
+                if(findIndex(resume.getUuid())>=0){
                     System.out.println("Storage already contains resume " + resume + ".");
                     break;
                 } else if (resume.compareTo(storage[0]) < 0) {
