@@ -11,6 +11,10 @@ public abstract class AbstractArrayStorage implements IStorage {
 
     protected abstract int findIndex(String uuid);
 
+    protected abstract void insertElement(Resume resume, int index);
+
+    protected abstract void fillDeletedElement(int index);
+
     public int size() {
         return size;
     }
@@ -45,20 +49,23 @@ public abstract class AbstractArrayStorage implements IStorage {
     }
 
     public void save(Resume r) {
+        int index = findIndex(r.getUuid());
         if (size == STORAGE_LIMIT) {
             System.out.println("Storage is full.");
-        } else if (findIndex(r.getUuid()) >= 0) {
-            System.out.println("Storage already contains resume " + r + ".");
         } else {
-            storage[size] = r;
-            size++;
+            if (index >= 0) {
+                System.out.println("Storage already contains resume " + r + ".");
+            } else {
+                insertElement(r, index);
+                size++;
+            }
         }
     }
 
     public void delete(String uuid) {
         int index = findIndex(uuid);
         if (index >= 0) {
-            storage[index] = storage[size - 1];
+            fillDeletedElement(index);
             storage[size - 1] = null;
             size--;
         } else {

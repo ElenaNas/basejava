@@ -14,43 +14,17 @@ public class SortedArrayStorage extends AbstractArrayStorage {
     }
 
     @Override
-    public void delete(String uuid) {
-        int index = findIndex(uuid);
-        if (index >= 0) {
-            storage[index] = storage[size - 1];
-            for (int i = index; i < size - 1; i++) {
-                storage[i] = storage[i + 1];
-            }
-            size--;
-        } else {
-            System.out.println("There's no such resume in the storage.");
-        }
+    protected void insertElement(Resume resume, int index) {
+        index = -findIndex(resume.getUuid()) - 1;
+        System.arraycopy(storage, index, storage, index + 1, size - index);
+        storage[index] = resume;
     }
 
-    public void save(Resume resume) {
-        if (size == STORAGE_LIMIT) {
-            System.out.println("Storage is full.");
-        } else if (size == 0) {
-            storage[0] = resume;
-            size++;
-        } else {
-            for (int i = 0; i < size; i++) {
-                if(findIndex(resume.getUuid())>=0){
-                    System.out.println("Storage already contains resume " + resume + ".");
-                    break;
-                } else if (resume.compareTo(storage[0]) < 0) {
-                    System.arraycopy(storage, 0, storage, 1, size + 1);
-                    storage[i] = resume;
-                    size++;
-                    break;
-                } else if (((storage[i].compareTo(resume) < 0) && (storage[i + 1] == null))
-                        || ((storage[i].compareTo(resume) < 0) && (storage[i + 1].compareTo(resume) > 0))) {
-                    System.arraycopy(storage, i + 1, storage, i + 2, size - i - 1);
-                    storage[i + 1] = resume;
-                    size++;
-                    break;
-                }
-            }
+    @Override
+    protected void fillDeletedElement(int index) {
+        int numMoved = size - index - 1;
+        if (numMoved > 0) {
+            System.arraycopy(storage, index + 1, storage, index, numMoved);
         }
     }
 }
