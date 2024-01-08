@@ -36,7 +36,6 @@ public class AbstractArrayStorageTest {
     @Test
     @Order(1)
     void get() throws Exception {
-        Resume resume = new Resume(UUID_1);
         assertEquals(storage.get(UUID_1), new Resume(UUID_1));
         System.out.println("Here's the resume you are looking for: " + storage.get(UUID_1));
         assertThrows(NotExistStorageException.class, () -> storage.get("uuid0"));
@@ -53,6 +52,8 @@ public class AbstractArrayStorageTest {
     @Order(2)
     void update() throws Exception {
         Resume resume = storage.get(UUID_3);
+        storage.update(resume);
+        assertEquals(resume, storage.get(UUID_3));
         System.out.println("Resume " + resume.getUuid() + " has been updated.");
         assertThrows(NotExistStorageException.class, () -> storage.get("uuid0"));
         System.out.println("Storage does not contain resume uuid0.");

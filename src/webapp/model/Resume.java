@@ -22,7 +22,6 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public String toString() {
-        System.out.println(Resume.class.toString());
         return Resume.class.toString();
     }
 
