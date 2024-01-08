@@ -24,19 +24,21 @@ public class AbstractArrayStorageTest {
     private static final String UUID_4 = "uuid4";
 
 
-    @BeforeAll
-    void init() throws Exception {
+    @BeforeEach
+    void restart() throws Exception {
+        clear();
         storage.save(new Resume(UUID_1));
         storage.save(new Resume(UUID_2));
         storage.save(new Resume(UUID_3));
+        System.out.println("Storage reloaded. It contains 3 resumes");
     }
 
     @Test
     @Order(1)
     void get() throws Exception {
         Resume resume = new Resume(UUID_1);
-        assertEquals(resume, new Resume(UUID_1));
-        System.out.println("Here's the resume you are looking for: " + UUID_1);
+        assertEquals(storage.get(UUID_1), new Resume(UUID_1));
+        System.out.println("Here's the resume you are looking for: " + storage.get(UUID_1));
         assertThrows(NotExistStorageException.class, () -> storage.get("uuid0"));
         System.out.println("Storage does not contain resume uuid0.");
     }
@@ -68,7 +70,7 @@ public class AbstractArrayStorageTest {
         storageFull();
         assertThrows(NotExistStorageException.class, () -> storage.get(UUID_4));
         storage.save(new Resume(UUID_4));
-        assertEquals(3, storage.size());
+        assertEquals(4, storage.size());
         System.out.println("Resume " + UUID_4 + " has been added.");
     }
 
@@ -101,8 +103,16 @@ public class AbstractArrayStorageTest {
 
     @Test
     void storageFull() throws Exception {
-        if(storage.size()==AbstractArrayStorage.STORAGE_LIMIT) {
+        try {
+            while (storage.size() < AbstractArrayStorage.STORAGE_LIMIT) {
+                storage.save(new Resume());
+            }
+        } catch (Exception e) {
             fail("Storage is full");
+        }
+        finally {
+            storage.clear();
+            restart();
         }
     }
 
