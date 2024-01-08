@@ -2,7 +2,7 @@ package webapp.exception;
 
 public class NotExistStorageException extends StorageException {
 
-    NotExistStorageException(String uuid) {
-        super("Resume " + uuid + " doesn't exist.", uuid);
+    public NotExistStorageException(String uuid) {
+        super("Resume " + uuid + " was not found in the storage.", uuid);
     }
 }
