@@ -11,7 +11,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class AbstractArrayStorageTest {
-    private static AbstractArrayStorage storage;
+    private static IStorage storage;
+
+    public AbstractArrayStorageTest() {
+       storage=new ArrayStorage();
+    }
+
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
@@ -21,13 +26,13 @@ public class AbstractArrayStorageTest {
 
     @BeforeAll
     void init() throws Exception {
-        storage=new ArrayStorage();
         storage.save(new Resume(UUID_1));
         storage.save(new Resume(UUID_2));
         storage.save(new Resume(UUID_3));
     }
 
     @Test
+    @Order(1)
     void get() throws Exception {
         Resume resume = new Resume(UUID_1);
         assertEquals(resume, new Resume(UUID_1));
@@ -43,6 +48,7 @@ public class AbstractArrayStorageTest {
     }
 
     @Test
+    @Order(2)
     void update() throws Exception {
         Resume resume = storage.get(UUID_3);
         System.out.println("Resume " + resume.getUuid() + " has been updated.");
@@ -54,28 +60,33 @@ public class AbstractArrayStorageTest {
     @Test
     void clear() throws Exception {
         storage.clear();
-        assertEquals(0, storage.size);
-        System.out.println("Storage has been cleared, current size is " + storage.size);
+        assertEquals(0, storage.size());
+        System.out.println("Storage has been cleared, current size is " + storage.size());
     }
     @Test
     void save() throws Exception{
         storageFull();
         assertThrows(NotExistStorageException.class, () -> storage.get(UUID_4));
         storage.save(new Resume(UUID_4));
+        assertEquals(3, storage.size());
+        System.out.println("Resume " + UUID_4 + " has been added.");
     }
 
     @Test
+    @Order(3)
     void delete() throws Exception{
+        assertNotNull(storage.get(UUID_2));
         storage.delete(UUID_2);
         assertThrows(NotExistStorageException.class, () -> storage.get(UUID_2));
         System.out.println("Resume " + UUID_2 + " has been deleted.");
-        System.out.println("Storage size is " + storage.size + ".");
+        System.out.println("Storage size is " + storage.size() + ".");
     }
 
     @Test
+    @Order(4)
     void size() throws Exception {
         assertEquals(3, storage.size());
-        System.out.println("Storage size is " + storage.size + ".");
+        System.out.println("Storage size is " + storage.size() + ".");
     }
 
     @Test
@@ -90,7 +101,7 @@ public class AbstractArrayStorageTest {
 
     @Test
     void storageFull() throws Exception {
-        if(storage.size==AbstractArrayStorage.STORAGE_LIMIT) {
+        if(storage.size()==AbstractArrayStorage.STORAGE_LIMIT) {
             fail("Storage is full");
         }
     }
