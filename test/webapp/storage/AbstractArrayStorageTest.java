@@ -3,6 +3,7 @@ package webapp.storage;
 import org.junit.jupiter.api.*;
 import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
+import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.Arrays;
@@ -10,121 +11,135 @@ import java.util.Arrays;
 import static org.junit.jupiter.api.Assertions.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-public class AbstractArrayStorageTest {
-    private static IStorage storage;
+public abstract class AbstractArrayStorageTest {
 
-    public AbstractArrayStorageTest() {
-       storage=new ArrayStorage();
+    final private IStorage storage;
+
+    protected AbstractArrayStorageTest(IStorage storage) {
+        this.storage = storage;
     }
-
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
+    private static final Resume RESUME_1 = new Resume(UUID_1);
+    private static final Resume RESUME_2 = new Resume(UUID_2);
+    private static final Resume RESUME_3 = new Resume(UUID_3);
+    private static final Resume RESUME_4 = new Resume(UUID_4);
 
-    @BeforeEach
-    void restart() throws Exception {
+    @BeforeAll
+    void setUp() throws StorageException {
         clear();
-        storage.save(new Resume(UUID_1));
-        storage.save(new Resume(UUID_2));
-        storage.save(new Resume(UUID_3));
+        storage.save(RESUME_1);
+        storage.save(RESUME_2);
+        storage.save(RESUME_3);
         System.out.println("Storage reloaded. It contains 3 resumes");
     }
 
-    @Test
-    @Order(1)
-    void get() throws Exception {
-        assertEquals(storage.get(UUID_1), new Resume(UUID_1));
-        System.out.println("Here's the resume you are looking for: " + storage.get(UUID_1));
-        assertThrows(NotExistStorageException.class, () -> storage.get("uuid0"));
-        System.out.println("Storage does not contain resume uuid0.");
+    @BeforeEach
+    void reset() throws StorageException {
+        clear();
+        setUp();
+    }
+
+    void assertSize(int size) throws StorageException {
+        assertEquals(size, storage.size());
     }
 
     @Test
-    void getAll() throws Exception {
-        System.out.println("All resumes from the storage are listed below: ");
-        System.out.println(Arrays.toString(storage.getAll()));
+    void size() throws StorageException {
+        assertSize(3);
+        System.out.println("Storage size is " + storage.size() + ".");
     }
 
     @Test
-    @Order(2)
-    void update() throws Exception {
-        Resume resume = storage.get(UUID_3);
+    void get() throws NotExistStorageException {
+        assertGet(RESUME_1);
+        System.out.println("Here's the resume you are looking for: " + RESUME_1);
+        assertGet(RESUME_2);
+        System.out.println("Here's the resume you are looking for: " + RESUME_1);
+        assertGet(RESUME_3);
+        System.out.println("Here's the resume you are looking for: " + RESUME_1);
+    }
+
+    void assertGet(Resume resume) {
+        assertEquals(resume, storage.get(resume.getUuid()));
+    }
+
+    @Test
+    void getAll() throws StorageException {
+        Resume[] array = storage.getAll();
+        Resume[] resumes = new Resume[]{RESUME_1, RESUME_2, RESUME_3};
+        assertEquals(3, array.length);
+        assertArrayEquals(array, resumes);
+        System.out.println("All resumes from the storage are listed below:\n" + Arrays.toString(storage.getAll()));
+    }
+
+    @Test
+    void update() throws NotExistStorageException {
+        Resume resume = new Resume(UUID_1);
         storage.update(resume);
-        assertEquals(resume, storage.get(UUID_3));
+        assertSame(resume, storage.get(UUID_1));
         System.out.println("Resume " + resume.getUuid() + " has been updated.");
-        assertThrows(NotExistStorageException.class, () -> storage.get("uuid0"));
-        System.out.println("Storage does not contain resume uuid0.");
-
     }
 
     @Test
-    void clear() throws Exception {
+    void updateNotExist() throws StorageException {
+        assertThrows(NotExistStorageException.class, () -> storage.get("uuid0"));
+        System.out.println("Storage does not contain resume uuid0.");
+    }
+
+    @Test
+    void clear() throws StorageException {
         storage.clear();
-        assertEquals(0, storage.size());
+        assertSize(0);
         System.out.println("Storage has been cleared, current size is " + storage.size());
     }
+
     @Test
-    void save() throws Exception{
-        storageFull();
-        assertThrows(NotExistStorageException.class, () -> storage.get(UUID_4));
-        storage.save(new Resume(UUID_4));
-        assertEquals(4, storage.size());
-        System.out.println("Resume " + UUID_4 + " has been added.");
+    void save() throws ExistStorageException {
+        storage.save(RESUME_4);
+        assertSize(4);
+        assertGet(RESUME_4);
+        System.out.println("Resume " + RESUME_4 + " has been added.");
     }
 
     @Test
-    @Order(3)
-    void delete() throws Exception{
+    void delete() throws NotExistStorageException {
         assertNotNull(storage.get(UUID_2));
         storage.delete(UUID_2);
-        assertThrows(NotExistStorageException.class, () -> storage.get(UUID_2));
-        System.out.println("Resume " + UUID_2 + " has been deleted.");
+        assertSize(2);
+        System.out.println("Resume " + RESUME_2 + " has been deleted.");
         System.out.println("Storage size is " + storage.size() + ".");
     }
 
     @Test
-    @Order(4)
-    void size() throws Exception {
-        assertEquals(3, storage.size());
-        System.out.println("Storage size is " + storage.size() + ".");
-    }
-
-    @Test
-    void getNotExist() throws Exception {
+    void getNotExist() throws StorageException {
         assertThrows(NotExistStorageException.class, () -> storage.get("dummy"));
     }
 
     @Test
-    void alreadyExists() throws Exception{
-        assertThrows(ExistStorageException.class, () -> storage.save(new Resume(UUID_1)));
+    void saveExisting() throws StorageException {
+        assertThrows(ExistStorageException.class, () -> storage.save(RESUME_1));
     }
 
     @Test
-    void storageFull() throws Exception {
+    void saveOverFlow() throws StorageException {
+        storage.clear();
         try {
-            while (storage.size() < AbstractArrayStorage.STORAGE_LIMIT) {
+            for (int i = 4; i <= AbstractArrayStorage.STORAGE_LIMIT + 1; i++) {
                 storage.save(new Resume());
             }
-        } catch (Exception e) {
-            fail("Storage is full");
+        } catch (StorageException e) {
+            fail("Storage is full.");
         }
-        finally {
-            storage.clear();
-            restart();
-        }
-    }
-
-    @AfterEach
-    void showResumeContents(){
-        storage.getAll();
-        storage.size();
+        storage.save(new Resume());
     }
 
     @AfterAll
-    void eraseData() throws Exception {
+    void eraseData() throws StorageException {
         clear();
     }
 }
