@@ -6,6 +6,7 @@ import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
@@ -52,12 +53,12 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public void delete(String uuid) {
-        int index = findIndex(uuid);
-        if (index >= 0) {
-            resumeList.remove(index);
-            size--;
-        } else {
-            throw new NotExistStorageException(uuid);
+        for (Iterator<Resume> iterator = resumeList.iterator(); iterator.hasNext(); ) {
+            Resume resume = iterator.next();
+            if (resume.getUuid().equals(uuid)) {
+                iterator.remove();
+                size--;
+            }
         }
     }
 
