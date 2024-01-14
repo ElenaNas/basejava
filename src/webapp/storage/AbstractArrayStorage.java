@@ -7,20 +7,13 @@ import webapp.model.Resume;
 
 import java.util.Arrays;
 
-public abstract class AbstractArrayStorage implements IStorage {
-    protected int size;
-    protected static final int STORAGE_LIMIT = 10000;
-    protected final Resume[] storage = new Resume[STORAGE_LIMIT];
+public abstract class AbstractArrayStorage extends AbstractStorage implements IStorage {
 
-    protected abstract int findIndex(String uuid);
+    protected final Resume[] storage = new Resume[STORAGE_LIMIT];
 
     protected abstract void insertElement(Resume resume, int index);
 
     protected abstract void fillDeletedElement(int index);
-
-    public int size() {
-        return size;
-    }
 
     public Resume get(String uuid) {
         int index = findIndex(uuid);

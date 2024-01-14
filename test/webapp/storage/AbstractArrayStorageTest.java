@@ -120,7 +120,7 @@ public abstract class AbstractArrayStorageTest {
                 storage.save(new Resume());
             }
         } catch (StorageException e) {
-            fail("Storage is full.");
+            fail("Storage is corrupted.");
         }
         assertThrows(StorageException.class, ()-> storage.save(new Resume()));
     }
