@@ -31,6 +31,7 @@ public abstract class AbstractStorage implements IStorage {
         }
         return searchKey;
     }
+
     public void save(Resume r) {
         if (size == STORAGE_LIMIT) {
             throw new StorageException("Storage is full.", r.getUuid());
