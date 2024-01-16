@@ -7,7 +7,7 @@ import java.util.List;
 
 public class ListStorage extends AbstractStorage {
 
-    List<Resume> resumeList = new ArrayList<>();
+    protected final List<Resume> resumeList = new ArrayList<>();
 
     @Override
     public Object getSearchKey(String uuid) {
