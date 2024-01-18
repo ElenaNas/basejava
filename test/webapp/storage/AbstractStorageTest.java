@@ -1,6 +1,7 @@
 package webapp.storage;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
@@ -10,11 +11,11 @@ import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public abstract class AbstractArrayStorageTest {
+public abstract class AbstractStorageTest {
 
     final private IStorage storage;
 
-    protected AbstractArrayStorageTest(IStorage storage) {
+    protected AbstractStorageTest(IStorage storage) {
         this.storage = storage;
     }
 

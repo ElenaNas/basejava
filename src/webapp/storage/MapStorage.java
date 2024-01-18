@@ -27,12 +27,7 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     public Resume doGet(Object uuid) {
-        for (Map.Entry<String, Resume> entry : resumeMap.entrySet()) {
-            if (entry.getKey().equals(uuid)) {
-                return entry.getValue();
-            }
-        }
-        return null;
+        return resumeMap.get(uuid);
     }
 
     @Override

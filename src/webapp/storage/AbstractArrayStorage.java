@@ -1,10 +1,13 @@
 package webapp.storage;
 
+import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.Arrays;
 
 public abstract class AbstractArrayStorage extends AbstractStorage implements IStorage {
+
+    protected static final int STORAGE_LIMIT = 10000;
 
     protected final Resume[] storage = new Resume[STORAGE_LIMIT];
 
@@ -19,6 +22,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage implements IS
 
     @Override
     public void doSave(Resume r, Object searchKey) {
+        if (size == STORAGE_LIMIT) {
+            throw new StorageException("Storage is full.", r.getUuid());
+        }
         insertElement(r, (Integer) searchKey);
         size++;
     }

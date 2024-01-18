@@ -2,19 +2,16 @@ package webapp.storage;
 
 import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
-import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 public abstract class AbstractStorage implements IStorage {
+
     protected int size;
-    protected static final int STORAGE_LIMIT = 10000;
 
-    private Object searchKey;
-
-    public abstract Object getSearchKey(String uuid);
-
-    public abstract boolean isExisting(Object searchKey);
-
+    @Override
+    public int size() {
+        return size;
+    }
 
     private Object getExistingSearchKey(String uuid) {
         Object searchKey = getSearchKey(uuid);
@@ -33,41 +30,39 @@ public abstract class AbstractStorage implements IStorage {
     }
 
     public void save(Resume r) {
-        if (size == STORAGE_LIMIT) {
-            throw new StorageException("Storage is full.", r.getUuid());
-        } else {
-            searchKey = getNotExistingSearchKey(r.getUuid());
-            doSave(r, searchKey);
-        }
+        Object searchKey = getNotExistingSearchKey(r.getUuid());
+        doSave(r, searchKey);
     }
 
-    public abstract void doSave(Resume r, Object searchKey);
-
     public Resume get(String uuid) {
+        Object searchKey;
         searchKey = getExistingSearchKey(uuid);
         return doGet(searchKey);
     }
 
-    public abstract Resume doGet(Object uuid);
-
     public void delete(String uuid) {
+        Object searchKey;
         searchKey = getExistingSearchKey(uuid);
         doDelete(searchKey);
     }
 
-    public abstract void doDelete(Object searchKey);
-
     public void update(Resume r) {
+        Object searchKey;
         searchKey = getExistingSearchKey(r.getUuid());
         doUpdate(r, searchKey);
     }
 
-    public abstract void doUpdate(Resume r, Object searchKey);
+    protected abstract Object getSearchKey(String uuid);
 
-    @Override
-    public int size() {
-        return size;
-    }
+    protected abstract boolean isExisting(Object searchKey);
+
+    protected abstract void doSave(Resume r, Object searchKey);
+
+    protected abstract Resume doGet(Object uuid);
+
+    protected abstract void doDelete(Object searchKey);
+
+    protected abstract void doUpdate(Resume r, Object searchKey);
 }
 
 
