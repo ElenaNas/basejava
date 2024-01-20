@@ -4,6 +4,7 @@ import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.List;
 
 public abstract class AbstractArrayStorage extends AbstractStorage implements IStorage {
 
@@ -42,8 +43,9 @@ public abstract class AbstractArrayStorage extends AbstractStorage implements IS
         System.out.println("Resume " + r + " has been updated");
     }
 
-    public Resume[] getAll() {
-        return Arrays.copyOf(storage, size);
+    @Override
+    public List<Resume> doCopy() {
+        return Arrays.asList(Arrays.copyOfRange(storage, 0, size));
     }
 
     public void clear() {

@@ -8,6 +8,7 @@ import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -24,11 +25,19 @@ public abstract class AbstractStorageTest {
     private static final String UUID_3 = "uuid3";
     private static final String UUID_4 = "uuid4";
 
-    private static final Resume RESUME_1 = new Resume(UUID_1);
-    private static final Resume RESUME_2 = new Resume(UUID_2);
-    private static final Resume RESUME_3 = new Resume(UUID_3);
-    private static final Resume RESUME_4 = new Resume(UUID_4);
-    private static final Resume UUID_NOT_EXIST = new Resume("dummy");
+    private static final Resume RESUME_1;
+    private static final Resume RESUME_2;
+    private static final Resume RESUME_3;
+    private static final Resume RESUME_4;
+
+    static {
+        RESUME_1 = new Resume(UUID_1, "Name1");
+        RESUME_2 = new Resume(UUID_2, "Name2");
+        RESUME_3 = new Resume(UUID_3, "Name3");
+        RESUME_4 = new Resume(UUID_4, "Name4");
+    }
+
+    private static final Resume UUID_NOT_EXIST = new Resume("UUID_5", "dummy");
     private static final int INITIAL_SIZE = 3;
 
     @BeforeEach
@@ -57,19 +66,18 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void getAll() throws StorageException {
-        Resume[] array = storage.getAll();
-        Resume[] resumes = new Resume[]{RESUME_1, RESUME_2, RESUME_3};
-        assertEquals(INITIAL_SIZE, array.length);
-        assertArrayEquals(array, resumes);
-        System.out.println("All resumes from the storage are listed below:\n" + Arrays.toString(storage.getAll()));
+    public void getAllSorted() throws Exception {
+        List<Resume> sortedList = storage.getAllSorted();
+        assertEquals(3, sortedList.size());
+        assertEquals(sortedList, Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
+        System.out.println("All resumes from the storage are listed below:\n" + storage);
     }
 
     @Test
     public void update() throws NotExistStorageException {
-        Resume resume = new Resume(UUID_1);
+        Resume resume = new Resume(UUID_1, "Elena Nasikovskaia");
         storage.update(resume);
-        assertSame(resume, storage.get(UUID_1));
+        assertSame(resume, storage.get(RESUME_1.getUuid()));
         System.out.println("Resume " + resume.getUuid() + " has been updated.");
     }
 
@@ -118,12 +126,12 @@ public abstract class AbstractStorageTest {
         storage.clear();
         try {
             for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
+                storage.save(new Resume(UUID_4));
             }
         } catch (StorageException e) {
             fail("Storage is corrupted.");
         }
-        assertThrows(StorageException.class, ()-> storage.save(new Resume()));
+        assertThrows(StorageException.class, ()-> storage.save(new Resume("Extra resume")));
     }
 
     private void assertSize(int size) throws StorageException {

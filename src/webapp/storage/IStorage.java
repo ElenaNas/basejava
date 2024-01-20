@@ -2,6 +2,8 @@ package webapp.storage;
 
 import webapp.model.Resume;
 
+import java.util.List;
+
 
 public interface IStorage {
     void clear();
@@ -14,7 +16,7 @@ public interface IStorage {
 
     void delete(String uuid);
 
-    Resume[] getAll();
+    List<Resume> getAllSorted();
 
     int size();
 

@@ -2,8 +2,7 @@ package webapp.storage;
 
 import webapp.model.Resume;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
+import java.util.*;
 
 public class MapStorage extends AbstractStorage {
 
@@ -42,13 +41,13 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    public void clear() {
-        resumeMap.clear();
-        size = 0;
+    public List<Resume> doCopy() {
+        return new ArrayList<>(resumeMap.values());
     }
 
     @Override
-    public Resume[] getAll() {
-        return resumeMap.values().toArray(new Resume[size]);
+    public void clear() {
+        resumeMap.clear();
+        size = 0;
     }
 }

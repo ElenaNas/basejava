@@ -4,14 +4,17 @@ import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.model.Resume;
 
-public abstract class AbstractStorage implements IStorage {
+import java.util.Comparator;
+import java.util.List;
 
-    protected int size;
+public abstract class AbstractStorage implements IStorage {
 
     @Override
     public int size() {
         return size;
     }
+
+    protected int size;
 
     private Object getExistingSearchKey(String uuid) {
         Object searchKey = getSearchKey(uuid);
@@ -52,6 +55,13 @@ public abstract class AbstractStorage implements IStorage {
         doUpdate(r, searchKey);
     }
 
+    @Override
+    public List<Resume> getAllSorted() {
+        List<Resume> list = doCopy();
+        list.sort(Comparator.comparing(Resume::getFullName));
+        return list;
+    }
+
     protected abstract Object getSearchKey(String uuid);
 
     protected abstract boolean isExisting(Object searchKey);
@@ -63,6 +73,8 @@ public abstract class AbstractStorage implements IStorage {
     protected abstract void doDelete(Object searchKey);
 
     protected abstract void doUpdate(Resume r, Object searchKey);
+
+    protected abstract List<Resume> doCopy();
 }
 
 
