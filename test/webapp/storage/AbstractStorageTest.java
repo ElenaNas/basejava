@@ -31,16 +31,10 @@ public abstract class AbstractStorageTest {
     private static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1, "Name1");
-        RESUME_2 = new Resume(UUID_2, "Name2");
-        RESUME_3 = new Resume(UUID_3, "Name3");
-        RESUME_4 = new Resume(UUID_4, "Name4");
-
-        //test getAllSorted fails with this
-/*      RESUME_1 = new Resume(UUID_1, "Elena");
+        RESUME_1 = new Resume(UUID_1, "Elena");
         RESUME_2 = new Resume(UUID_2, "Sofia");
         RESUME_3 = new Resume(UUID_3, "Alexander");
-        RESUME_4 = new Resume(UUID_4, "Orsik");*/
+        RESUME_4 = new Resume(UUID_4, "Orsik");
     }
 
     private static final Resume UUID_NOT_EXIST = new Resume("UUID_5", "dummy");
@@ -72,10 +66,10 @@ public abstract class AbstractStorageTest {
     }
 
     @Test
-    public void getAllSorted(){
+    public void getAllSorted() {
         List<Resume> list = storage.getAllSorted();
         assertEquals(3, list.size());
-        assertEquals(list, Arrays.asList(RESUME_1, RESUME_2, RESUME_3));
+        assertEquals(list, Arrays.asList(RESUME_3, RESUME_1, RESUME_2));
         System.out.println("All resumes from the storage are listed below:\n" + storage.getAllSorted());
     }
 
@@ -132,7 +126,7 @@ public abstract class AbstractStorageTest {
         storage.clear();
         try {
             for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume(UUID_4));
+                storage.save(new Resume("New Resume"));
             }
         } catch (StorageException e) {
             fail("Storage is corrupted.");
