@@ -18,6 +18,8 @@ public class Resume  implements Comparable<Resume>{
     }
 
     public Resume(String uuid, String fullName) {
+        Objects.requireNonNull(uuid, "UUID can not be null");
+        Objects.requireNonNull(fullName, "Name can not be null");
         this.uuid = uuid;
         this.fullName = fullName;
     }
@@ -40,7 +42,7 @@ public class Resume  implements Comparable<Resume>{
 
     @Override
     public int hashCode() {
-        return Objects.hash(uuid, fullName);
+        return Objects.hash(getUuid(), getFullName());
     }
 
     @Override

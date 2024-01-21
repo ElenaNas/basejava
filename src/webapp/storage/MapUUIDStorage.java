@@ -4,40 +4,40 @@ import webapp.model.Resume;
 
 import java.util.*;
 
-public class MapStorage extends AbstractStorage {
+public class MapUUIDStorage extends AbstractStorage<String> {
 
     protected final Map<String, Resume> resumeMap = new LinkedHashMap<>();
 
     @Override
-    public Object getSearchKey(String uuid) {
+    public String getSearchKey(String uuid) {
         return uuid;
     }
 
     @Override
-    public boolean isExisting(Object searchKey) {
-        return resumeMap.containsKey((String) searchKey);
+    public boolean isExisting(String uuid) {
+        return resumeMap.containsKey((String) uuid);
     }
 
     @Override
-    public void doSave(Resume r, Object searchKey) {
-        resumeMap.put((String) searchKey, r);
+    public void doSave(Resume r, String searchKey) {
+        resumeMap.put(searchKey, r);
         size++;
     }
 
     @Override
-    public Resume doGet(Object uuid) {
+    public Resume doGet(String uuid) {
         return resumeMap.get(uuid);
     }
 
     @Override
-    public void doDelete(Object searchKey) {
-        resumeMap.remove(searchKey);
+    public void doDelete(String uuid) {
+        resumeMap.remove(uuid);
         size--;
     }
 
     @Override
-    public void doUpdate(Resume r, Object searchKey) {
-        resumeMap.replace((String) searchKey, r);
+    public void doUpdate(Resume r, String uuid) {
+        resumeMap.replace(uuid, r);
     }
 
     @Override
