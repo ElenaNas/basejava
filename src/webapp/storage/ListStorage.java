@@ -32,7 +32,7 @@ public class ListStorage extends AbstractStorage<Integer> {
 
     @Override
     public void doUpdate(Resume r, Integer searchKey) {
-        resumeList.set((Integer) searchKey, r);
+        resumeList.set(searchKey, r);
         System.out.println("Resume " + r + " has been updated");
     }
 
@@ -44,7 +44,7 @@ public class ListStorage extends AbstractStorage<Integer> {
 
     @Override
     public Resume doGet(Integer uuid) {
-        return resumeList.get((Integer) uuid);
+        return resumeList.get(uuid);
     }
 
     @Override

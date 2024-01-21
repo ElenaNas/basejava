@@ -18,7 +18,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> impl
 
     @Override
     public Resume doGet(Integer uuid) {
-        return storage[(int) uuid];
+        return storage[uuid];
     }
 
     @Override
@@ -32,7 +32,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> impl
 
     @Override
     public void doDelete(Integer searchKey) {
-        fillDeletedElement((Integer) searchKey);
+        fillDeletedElement(searchKey);
         storage[size - 1] = null;
         size--;
     }
@@ -55,6 +55,6 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> impl
 
     @Override
     public boolean isExisting(Integer searchKey) {
-        return (Integer) searchKey >= 0;
+        return (searchKey >= 0);
     }
 }
