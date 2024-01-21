@@ -1,6 +1,6 @@
 package webapp.storage;
 
-class SortedArrayStorageTest extends AbstractStorageTest {
+public class SortedArrayStorageTest extends AbstractStorageTest {
     public SortedArrayStorageTest() {
         super(new SortedArrayStorage());
     }

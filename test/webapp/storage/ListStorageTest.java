@@ -3,8 +3,8 @@ package webapp.storage;
 import org.junit.jupiter.api.Disabled;
 import webapp.exception.StorageException;
 
-class ListStorageTest extends AbstractStorageTest {
-    protected ListStorageTest() {
+public class ListStorageTest extends AbstractStorageTest {
+    public ListStorageTest() {
         super(new ListStorage());
     }
 

@@ -3,9 +3,9 @@ package webapp.storage;
 import org.junit.jupiter.api.Disabled;
 import webapp.exception.StorageException;
 
-class MapStorageTest extends AbstractStorageTest {
+public class MapStorageTest extends AbstractStorageTest {
 
-    protected MapStorageTest() {
+    public MapStorageTest() {
         super(new MapStorage());
     }
 

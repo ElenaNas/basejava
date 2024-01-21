@@ -16,7 +16,7 @@ public abstract class AbstractStorageTest {
 
     final private IStorage storage;
 
-    protected AbstractStorageTest(IStorage storage) {
+    public AbstractStorageTest(IStorage storage) {
         this.storage = storage;
     }
 
