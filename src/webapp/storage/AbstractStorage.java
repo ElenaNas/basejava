@@ -6,42 +6,52 @@ import webapp.model.Resume;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.logging.Logger;
 
-public abstract class AbstractStorage <SK> implements IStorage {
+public abstract class AbstractStorage<SK> implements IStorage {
+
+    private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
+
+    private static final Comparator<Resume> RESUME_COMPARATOR = Comparator
+            .comparing(Resume::getFullName)
+            .thenComparing(Resume::getUuid);
 
     public void save(Resume r) {
+        LOG.info("Save " + r);
         SK searchKey = getNotExistingSearchKey(r.getUuid());
         doSave(r, searchKey);
     }
 
     public Resume get(String uuid) {
-       SK searchKey;
-        searchKey = getExistingSearchKey(uuid);
+        LOG.info("Get " + uuid);
+        SK searchKey = getExistingSearchKey(uuid);
         return doGet(searchKey);
     }
 
     public void delete(String uuid) {
-        SK searchKey;
-        searchKey = getExistingSearchKey(uuid);
+        LOG.info("Delete " + uuid);
+        SK searchKey = getExistingSearchKey(uuid);
         doDelete(searchKey);
     }
 
     public void update(Resume r) {
-        SK searchKey;
-        searchKey = getExistingSearchKey(r.getUuid());
+        LOG.info("Update " + r);
+        SK searchKey = getExistingSearchKey(r.getUuid());
         doUpdate(r, searchKey);
     }
 
     @Override
     public List<Resume> getAllSorted() {
+        LOG.info("GetAllSorted");
         List<Resume> list = doCopy();
-        list.sort(Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid));
+        list.sort(RESUME_COMPARATOR);
         return list;
     }
 
     private SK getExistingSearchKey(String uuid) {
         SK searchKey = getSearchKey(uuid);
         if (!isExisting(searchKey)) {
+            LOG.warning("Resume " + uuid + " does not exist");
             throw new NotExistStorageException(uuid);
         }
         return searchKey;
@@ -50,6 +60,7 @@ public abstract class AbstractStorage <SK> implements IStorage {
     private SK getNotExistingSearchKey(String uuid) {
         SK searchKey = getSearchKey(uuid);
         if (isExisting(searchKey)) {
+            LOG.warning("Resume " + uuid + " already exists");
             throw new ExistStorageException(uuid);
         }
         return searchKey;

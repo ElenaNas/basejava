@@ -1,7 +1,6 @@
 package webapp.model;
 
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Resume  implements Comparable<Resume>{
 
