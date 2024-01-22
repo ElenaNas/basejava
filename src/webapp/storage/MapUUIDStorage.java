@@ -21,7 +21,6 @@ public class MapUUIDStorage extends AbstractStorage<String> {
     @Override
     public void doSave(Resume r, String searchKey) {
         resumeMap.put(searchKey, r);
-        size++;
     }
 
     @Override
@@ -32,7 +31,6 @@ public class MapUUIDStorage extends AbstractStorage<String> {
     @Override
     public void doDelete(String uuid) {
         resumeMap.remove(uuid);
-        size--;
     }
 
     @Override
@@ -48,6 +46,10 @@ public class MapUUIDStorage extends AbstractStorage<String> {
     @Override
     public void clear() {
         resumeMap.clear();
-        size = 0;
+    }
+
+    @Override
+    public int size() {
+        return resumeMap.size();
     }
 }

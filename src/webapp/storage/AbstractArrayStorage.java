@@ -16,6 +16,13 @@ public abstract class AbstractArrayStorage extends AbstractStorage<Integer> impl
 
     protected abstract void fillDeletedElement(int index);
 
+    protected int size;
+
+    @Override
+    public int size() {
+        return size;
+    }
+
     @Override
     public Resume doGet(Integer uuid) {
         return storage[uuid];

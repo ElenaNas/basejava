@@ -27,7 +27,11 @@ public class ListStorage extends AbstractStorage<Integer> {
     @Override
     public void clear() {
         resumeList.clear();
-        size = 0;
+    }
+
+    @Override
+    public int size() {
+        return resumeList.size();
     }
 
     @Override
@@ -39,7 +43,6 @@ public class ListStorage extends AbstractStorage<Integer> {
     @Override
     public void doSave(Resume r, Integer searchKey) {
         resumeList.add(r);
-        size++;
     }
 
     @Override
@@ -50,7 +53,6 @@ public class ListStorage extends AbstractStorage<Integer> {
     @Override
     public void doDelete(Integer searchKey) {
         resumeList.remove((int) searchKey);
-        size--;
     }
 
     @Override

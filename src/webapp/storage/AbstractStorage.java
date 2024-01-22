@@ -9,29 +9,6 @@ import java.util.List;
 
 public abstract class AbstractStorage <SK> implements IStorage {
 
-    @Override
-    public int size() {
-        return size;
-    }
-
-    protected int size;
-
-    private SK getExistingSearchKey(String uuid) {
-        SK searchKey = getSearchKey(uuid);
-        if (!isExisting(searchKey)) {
-            throw new NotExistStorageException(uuid);
-        }
-        return searchKey;
-    }
-
-    private SK getNotExistingSearchKey(String uuid) {
-        SK searchKey = getSearchKey(uuid);
-        if (isExisting(searchKey)) {
-            throw new ExistStorageException(uuid);
-        }
-        return searchKey;
-    }
-
     public void save(Resume r) {
         SK searchKey = getNotExistingSearchKey(r.getUuid());
         doSave(r, searchKey);
@@ -60,6 +37,22 @@ public abstract class AbstractStorage <SK> implements IStorage {
         List<Resume> list = doCopy();
         list.sort(Comparator.comparing(Resume::getFullName).thenComparing(Resume::getUuid));
         return list;
+    }
+
+    private SK getExistingSearchKey(String uuid) {
+        SK searchKey = getSearchKey(uuid);
+        if (!isExisting(searchKey)) {
+            throw new NotExistStorageException(uuid);
+        }
+        return searchKey;
+    }
+
+    private SK getNotExistingSearchKey(String uuid) {
+        SK searchKey = getSearchKey(uuid);
+        if (isExisting(searchKey)) {
+            throw new ExistStorageException(uuid);
+        }
+        return searchKey;
     }
 
     protected abstract SK getSearchKey(String uuid);
