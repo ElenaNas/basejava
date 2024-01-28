@@ -3,11 +3,12 @@ package webapp.model;
 import java.util.List;
 import java.util.Objects;
 
-public class ListSection {
+public class ListSection extends AbstractSection{
 
     private final List<String>dataList;
 
     public ListSection(List<String> dataList) {
+        Objects.requireNonNull(dataList, "items must not be null");
         this.dataList = dataList;
     }
 
