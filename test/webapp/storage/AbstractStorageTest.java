@@ -6,6 +6,7 @@ import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
+import webapp.model.ResumeTestData;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,6 +36,8 @@ public abstract class AbstractStorageTest {
         RESUME_2 = new Resume(UUID_2, "Sofia");
         RESUME_3 = new Resume(UUID_3, "Alexander");
         RESUME_4 = new Resume(UUID_4, "Orsik");
+
+        ResumeTestData.fillResume(RESUME_1.getUuid(), RESUME_1.getFullName());
     }
 
     private static final Resume UUID_NOT_EXIST = new Resume("UUID_5", "dummy");

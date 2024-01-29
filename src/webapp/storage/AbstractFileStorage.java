@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Objects;
 
 public abstract class AbstractFileStorage extends AbstractStorage<File> {
-    private File directory;
+    private final File directory;
 
     public AbstractFileStorage(File directory) {
         Objects.requireNonNull(directory, "Directory can not be null");
@@ -45,12 +45,20 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected Resume doGet(File file) {
-        return doRead(file);
+        try {
+            return doRead(file);
+        } catch (IOException e) {
+            throw new StorageException("Error while getting file ", file.getName());
+        }
     }
 
     @Override
     protected void doDelete(File file) {
-        file.delete();
+        try {
+            file.delete();
+        } catch (Exception e) {
+            throw new StorageException("Error while deleting file ", file.getName());
+        }
     }
 
     @Override
@@ -64,15 +72,19 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doCopy() {
-        List<Resume> resumeList = new ArrayList<>();
-        resumeList.add(doRead(directory));
+        List<Resume> resumeList = new ArrayList<>(Objects.requireNonNull(directory.list()).length);
+        try {
+            resumeList.add(doRead(directory));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
         return resumeList;
     }
 
     @Override
     public void clear() {
-        for (String name : Objects.requireNonNull(directory.list())) {
-            delete(name);
+        for (File f : Objects.requireNonNull(directory.listFiles())) {
+            doDelete(f);
         }
     }
 
@@ -83,5 +95,5 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     protected abstract void doWrite(Resume r, File file) throws IOException;
 
-    protected abstract Resume doRead(File file);
+    protected abstract Resume doRead(File file) throws IOException;
 }
