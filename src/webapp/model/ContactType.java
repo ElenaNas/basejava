@@ -1,6 +1,6 @@
 package webapp.model;
 
-public enum ContactSection {
+public enum ContactType {
     MOBILE_PHONE_NUMBER("Номер мобильного телефона"),
     SKYPE("Skype"),
     EMAIL("Адрес электронной почты"),
@@ -15,7 +15,7 @@ public enum ContactSection {
         return title;
     }
 
-    ContactSection(String title) {
+    ContactType(String title) {
         this.title = title;
     }
 
