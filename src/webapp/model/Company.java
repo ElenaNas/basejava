@@ -1,46 +1,49 @@
 package webapp.model;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class Company extends AbstractSection {
-    private final String companyName;
+    private final Link homePage;
+
+    private List<Occupation> occupationList = new ArrayList<>();
 
     protected List<Occupation> getOccupationList() {
         return occupationList;
     }
 
-    private final List<Occupation> occupationList;
-
-    public Company(String companyName, List<Occupation> occupationList, Link webSite) {
-        Objects.requireNonNull(companyName, "Company name can not be null");
-        Objects.requireNonNull(occupationList, "Occupation name can not be null");
-        Objects.requireNonNull(webSite, "Website name can not be null");
-        this.companyName = companyName;
-        this.occupationList = occupationList;
+    public Link getHomePage() {
+        return homePage;
     }
 
-    public String getCompanyName() {
-        return companyName;
+    public Company(String name, String url, Occupation... occupations) {
+        this(new Link(name, url), Arrays.asList(occupations));
+    }
+
+    public Company(Link homePage, List<Occupation> occupationList) {
+        this.homePage = homePage;
+        this.occupationList = occupationList;
     }
 
     @Override
     public String toString() {
         return "Company{" +
-                "companyName='" + companyName + '\'' +
+                "homePage=" + homePage +
                 ", occupationList=" + occupationList +
                 '}';
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof Company company)) return false;
-        return Objects.equals(getCompanyName(), company.getCompanyName()) && Objects.equals(getOccupationList(), company.getOccupationList());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Company company)) return false;
+        return Objects.equals(homePage, company.homePage) && Objects.equals(getOccupationList(), company.getOccupationList());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCompanyName(), getOccupationList());
+        return Objects.hash(homePage, getOccupationList());
     }
 }
