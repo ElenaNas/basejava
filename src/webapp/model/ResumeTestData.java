@@ -51,42 +51,42 @@ public class ResumeTestData {
 
         sections.put(SectionType.QUALIFICATIONS, qualifications);
 
-        List<Occupation> workList1 = new ArrayList<>();
+        List<Company.Occupation> workList1 = new ArrayList<>();
         LocalDate workStartDate1 = LocalDate.of(2016, Month.DECEMBER, 18);
         LocalDate workEndDate1 = LocalDate.now();
-        Occupation occupation1WorkPlace1 = new Occupation("JobTitle from workPlace 1",
+        Company.Occupation occupation1WorkPlace1 = new Company.Occupation("JobTitle from workPlace 1",
                 "JobDescription from workPlace1", workStartDate1, workEndDate1);
         workList1.add(occupation1WorkPlace1);
         Link workPlace1Link = new Link("Company#1", "WebSite");
-        Company workPlace1 = new Company("CompanyName1", workList1, workPlace1Link);
+        Company workPlace1 = new Company(workPlace1Link, workList1);
         sections.put(SectionType.EXPERIENCE, workPlace1);
 
-        List<Occupation> workList2 = new ArrayList<>();
+        List<Company.Occupation> workList2 = new ArrayList<>();
         LocalDate workStartDate2 = LocalDate.of(2009, Month.SEPTEMBER, 1);
         LocalDate workEndDate2 = LocalDate.now();
-        Occupation occupation1WorkPlace2 = new Occupation("JobTitle from workPlace 2",
+        Company.Occupation occupation1WorkPlace2 = new Company.Occupation("JobTitle from workPlace 2",
                 "JobDescription from workPlace2", workStartDate2, workEndDate2);
         workList2.add(occupation1WorkPlace2);
         Link workPlace2Link = new Link("Company#1", "WebSite");
-        Company workPlace2 = new Company("CompanyName2", workList2, workPlace2Link);
+        Company workPlace2 = new Company(workPlace2Link, workList2);
         sections.put(SectionType.EXPERIENCE, workPlace2);
 
-        List<Occupation> eduPlaceList1 = new ArrayList<>();
+        List<Company.Occupation> eduPlaceList1 = new ArrayList<>();
         LocalDate eduStartDate1 = LocalDate.of(2004, Month.SEPTEMBER, 1);
         LocalDate eduEndDate1 = LocalDate.of(2009, Month.JULY, 15);
-        Occupation occupation1EduPlace1 = new Occupation("Faculty1", "Diploma2", eduStartDate1, eduEndDate1);
+        Company.Occupation occupation1EduPlace1 = new Company.Occupation("Faculty1", "Diploma2", eduStartDate1, eduEndDate1);
         eduPlaceList1.add(occupation1EduPlace1);
         Link eduPlace1Link = new Link("EduPlace1", "Website");
-        Company eduPlace1 = new Company("EduPlaceName1", eduPlaceList1, eduPlace1Link);
+        Company eduPlace1 = new Company(eduPlace1Link, eduPlaceList1);
         sections.put(SectionType.EDUCATION, eduPlace1);
 
-        List<Occupation> eduPlaceList2 = new ArrayList<>();
+        List<Company.Occupation> eduPlaceList2 = new ArrayList<>();
         LocalDate eduStartDate2 = LocalDate.of(2023, Month.SEPTEMBER, 1);
         LocalDate eduEndDate2 = LocalDate.now();
-        Occupation occupation1EduPlace2 = new Occupation("Faculty2", "Diploma2", eduStartDate2, eduEndDate2);
+        Company.Occupation occupation1EduPlace2 = new Company.Occupation("Faculty2", "Diploma2", eduStartDate2, eduEndDate2);
         eduPlaceList2.add(occupation1EduPlace2);
         Link eduPlace2Link = new Link("EduPlace1", "Website");
-        Company eduPlace2 = new Company("EduPlaceName1", eduPlaceList2, eduPlace2Link);
+        Company eduPlace2 = new Company(eduPlace2Link, eduPlaceList2);
         sections.put(SectionType.EDUCATION, eduPlace2);
 
         return new Resume(uuid, fullName);
