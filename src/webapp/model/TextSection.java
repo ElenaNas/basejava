@@ -2,7 +2,7 @@ package webapp.model;
 
 import java.util.Objects;
 
-public class TextSection extends AbstractSection{
+public class TextSection extends Section {
     private final String text;
 
     public TextSection(String text) {
@@ -16,7 +16,7 @@ public class TextSection extends AbstractSection{
 
     @Override
     public String toString() {
-        return "TextSection{" +
+        return "\nTextSection{" +
                 "text='" + text + '\'' +
                 '}';
     }

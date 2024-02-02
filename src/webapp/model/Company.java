@@ -11,7 +11,7 @@ import static webapp.util.DateUtil.NOW;
 import static webapp.util.DateUtil.of;
 
 
-public class Company extends AbstractSection {
+public class Company extends Section {
     private final Link homePage;
 
     private List<Occupation> occupationList = new ArrayList<>();
@@ -35,9 +35,9 @@ public class Company extends AbstractSection {
 
     @Override
     public String toString() {
-        return "Company{" +
-                "homePage=" + homePage +
-                ", occupationList=" + occupationList +
+        return "\nCompany{" +
+                "\nhomePage=" + homePage +
+                ", \noccupationList=" + occupationList +
                 '}';
     }
 

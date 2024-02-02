@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-public class CompanySection extends AbstractSection {
+public class CompanySection extends Section {
     private final List<Company> companies;
 
     public CompanySection(Company... companies) {
@@ -22,8 +22,8 @@ public class CompanySection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "CompanySection{" +
-                "companies=" + companies +
+        return "\nCompanySection{" +
+                "\ncompanies=" + companies +
                 '}';
     }
 

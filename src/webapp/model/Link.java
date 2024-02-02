@@ -9,9 +9,9 @@ public record Link(String name, String url) {
 
     @Override
     public String toString() {
-        return "Link{" +
-                "name='" + name + '\'' +
-                ", url='" + url + '\'' +
+        return "\nLink{" +
+                "\nname='" + name + '\'' +
+                ", \nurl='" + url + '\'' +
                 '}';
     }
 

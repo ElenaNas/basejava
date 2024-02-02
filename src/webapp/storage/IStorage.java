@@ -19,5 +19,4 @@ public interface IStorage {
     List<Resume> getAllSorted();
 
     int size();
-
 }

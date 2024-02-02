@@ -3,9 +3,9 @@ package webapp.model;
 import java.util.List;
 import java.util.Objects;
 
-public class ListSection extends AbstractSection{
+public class ListSection extends Section {
 
-    private final List<String>dataList;
+    private final List<String> dataList;
 
     public ListSection(List<String> dataList) {
         Objects.requireNonNull(dataList, "items must not be null");
@@ -18,8 +18,8 @@ public class ListSection extends AbstractSection{
 
     @Override
     public String toString() {
-        return "ListSection{" +
-                "dataList=" + dataList +
+        return "\nListSection{" +
+                "\ndataList=" + dataList +
                 '}';
     }
 

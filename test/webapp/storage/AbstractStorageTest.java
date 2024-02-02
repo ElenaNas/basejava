@@ -6,7 +6,6 @@ import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.model.ResumeTestData;
 
 import java.util.Arrays;
 import java.util.List;
@@ -15,7 +14,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractStorageTest {
 
-    final private IStorage storage;
+    protected IStorage storage;
 
     public AbstractStorageTest(IStorage storage) {
         this.storage = storage;
@@ -32,12 +31,10 @@ public abstract class AbstractStorageTest {
     private static final Resume RESUME_4;
 
     static {
-        RESUME_1 = new Resume(UUID_1, "Elena");
-        RESUME_2 = new Resume(UUID_2, "Sofia");
-        RESUME_3 = new Resume(UUID_3, "Alexander");
-        RESUME_4 = new Resume(UUID_4, "Orsik");
-
-        ResumeTestData.fillResume(RESUME_1.getUuid(), RESUME_1.getFullName());
+        RESUME_1 = ResumeTestData.createResume(UUID_1, "Elena");
+        RESUME_2 = ResumeTestData.createResume(UUID_2, "Sofia");
+        RESUME_3 = ResumeTestData.createResume(UUID_3, "Alexander");
+        RESUME_4 = ResumeTestData.createResume(UUID_4, "Orsik");
     }
 
     private static final Resume UUID_NOT_EXIST = new Resume("UUID_5", "dummy");
@@ -101,7 +98,7 @@ public abstract class AbstractStorageTest {
     public void save() throws ExistStorageException {
         assertSize(INITIAL_SIZE);
         storage.save(RESUME_4);
-        assertSize(INITIAL_SIZE+1);
+        assertSize(INITIAL_SIZE + 1);
         assertGet(RESUME_4);
         System.out.println("Resume " + RESUME_4 + " has been added.");
     }
@@ -109,9 +106,9 @@ public abstract class AbstractStorageTest {
     @Test
     public void delete() throws NotExistStorageException {
         storage.delete(UUID_2);
-        assertSize(INITIAL_SIZE-1);
+        assertSize(INITIAL_SIZE - 1);
         System.out.println("Resume " + RESUME_2 + " has been deleted.");
-        System.out.println("Storage size is " + (INITIAL_SIZE-1) + ".");
+        System.out.println("Storage size is " + (INITIAL_SIZE - 1) + ".");
     }
 
     @Test
@@ -122,19 +119,6 @@ public abstract class AbstractStorageTest {
     @Test
     public void saveExisting() throws StorageException {
         assertThrows(ExistStorageException.class, () -> storage.save(RESUME_1));
-    }
-
-    @Test
-    public void saveOverFlow() throws StorageException {
-        storage.clear();
-        try {
-            for (int i = 0; i < AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume("New Resume"));
-            }
-        } catch (StorageException e) {
-            fail("Storage is corrupted.");
-        }
-        assertThrows(StorageException.class, ()-> storage.save(new Resume("Extra resume")));
     }
 
     private void assertSize(int size) throws StorageException {
