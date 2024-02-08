@@ -1,8 +1,11 @@
 package webapp.model;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public record Link(String name, String url) {
+public record Link(String name, String url) implements Serializable {
+    private static final long serailUID=1L;
+
     public Link {
         Objects.requireNonNull(name, "Company name can not be null");
     }

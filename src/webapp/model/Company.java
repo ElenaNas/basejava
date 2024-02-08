@@ -1,5 +1,6 @@
 package webapp.model;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ArrayList;
@@ -11,7 +12,9 @@ import static webapp.util.DateUtil.NOW;
 import static webapp.util.DateUtil.of;
 
 
-public class Company extends Section {
+public class Company extends Section implements Serializable {
+    private static final long serailUID=1L;
+
     private final Link homePage;
 
     private List<Occupation> occupationList = new ArrayList<>();
@@ -53,7 +56,9 @@ public class Company extends Section {
         return Objects.hash(homePage, getOccupationList());
     }
 
-    public static class Occupation {
+    public static class Occupation implements Serializable{
+        private static final long serailUID=1L;
+
         private final LocalDate fromPeriod;
         private final LocalDate tillPeriod;
         private final String jobTitle;

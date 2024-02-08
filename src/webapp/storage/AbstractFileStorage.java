@@ -3,8 +3,7 @@ package webapp.storage;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -34,19 +33,19 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void doSave(Resume r, File file) {
+    protected void doSave(Resume resume, File file) {
         try {
             file.createNewFile();
-            doWrite(r, file);
         } catch (IOException e) {
-            throw new StorageException("IO error", file.getName(), e);
+            throw new StorageException("File with this name can not be created in indicated directory  " + file.getAbsolutePath(), file.getName(), e);
         }
+        doUpdate(resume, file);
     }
 
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(file);
+            return doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("Error while getting file ", file.getName());
         }
@@ -62,38 +61,43 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     }
 
     @Override
-    protected void doUpdate(Resume r, File file) {
+    protected void doUpdate(Resume resume, File file) {
         try {
-            doWrite(r, file);
+            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
-            throw new StorageException("IO error", file.getName(), e);
+            throw new StorageException("File can not be created " + file.getAbsolutePath(), file.getName(), e);
         }
     }
 
     @Override
     protected List<Resume> doCopy() {
-        List<Resume> resumeList = new ArrayList<>(Objects.requireNonNull(directory.list()).length);
+        File[] listFiles = Objects.requireNonNull(directory.listFiles());
+        List<Resume> resumeList = new ArrayList<>();
         try {
-            resumeList.add(doRead(directory));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
+            for (File file : listFiles) {
+                resumeList.add(doGet(file));
+            }
+        } catch (Exception e) {
+            throw new StorageException("Following resumes can not be copied " + directory.getAbsolutePath(), directory.getName());
         }
         return resumeList;
     }
 
     @Override
     public void clear() {
-        for (File f : Objects.requireNonNull(directory.listFiles())) {
-            doDelete(f);
+        File[] listFiles = Objects.requireNonNull(directory.listFiles());
+        for (File file : listFiles) {
+            doDelete(file);
         }
     }
 
     @Override
     public int size() {
-        return Objects.requireNonNull(directory.listFiles()).length;
+        String[] listFiles = Objects.requireNonNull(directory.list());
+        return listFiles.length;
     }
 
-    protected abstract void doWrite(Resume r, File file) throws IOException;
+    protected abstract void doWrite(Resume resume, OutputStream outputStream) throws IOException;
 
-    protected abstract Resume doRead(File file) throws IOException;
+    protected abstract Resume doRead(InputStream inputStream) throws IOException;
 }

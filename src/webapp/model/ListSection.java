@@ -1,15 +1,21 @@
 package webapp.model;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 public class ListSection extends Section {
+    private static final long serailUID=1L;
 
     private final List<String> dataList;
 
     public ListSection(List<String> dataList) {
         Objects.requireNonNull(dataList, "items must not be null");
         this.dataList = dataList;
+    }
+
+    public ListSection(String... dataList) {
+        this(Arrays.asList(dataList));
     }
 
     public List<String> getDataList() {

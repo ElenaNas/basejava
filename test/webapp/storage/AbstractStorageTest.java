@@ -7,12 +7,14 @@ import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 public abstract class AbstractStorageTest {
+    protected static final File STORAGE_DIRECTORY = new File("C:\\Users\\nas-e\\basejava\\src\\webapp\\storageSer");
 
     protected IStorage storage;
 
@@ -31,10 +33,12 @@ public abstract class AbstractStorageTest {
     private static final Resume RESUME_4;
 
     static {
-        RESUME_1 = ResumeTestData.createResume(UUID_1, "Elena");
-        RESUME_2 = ResumeTestData.createResume(UUID_2, "Sofia");
-        RESUME_3 = ResumeTestData.createResume(UUID_3, "Alexander");
-        RESUME_4 = ResumeTestData.createResume(UUID_4, "Orsik");
+        RESUME_1 = new Resume(UUID_1, "Elena");
+        RESUME_2 = new Resume(UUID_2, "Sofia");
+        RESUME_3 = new Resume(UUID_3, "Alexander");
+        RESUME_4 = new Resume(UUID_4, "Orsik");
+
+        ResumeTestData.fillResume(RESUME_1.getUuid(), RESUME_1.getFullName());
     }
 
     private static final Resume UUID_NOT_EXIST = new Resume("UUID_5", "dummy");
@@ -77,7 +81,7 @@ public abstract class AbstractStorageTest {
     public void update() throws NotExistStorageException {
         Resume resume = new Resume(UUID_1, "Elena Nasikovskaia");
         storage.update(resume);
-        assertSame(resume, storage.get(RESUME_1.getUuid()));
+        assertEquals(resume, storage.get(RESUME_1.getUuid()));
         System.out.println("Resume " + resume.getUuid() + " has been updated.");
     }
 

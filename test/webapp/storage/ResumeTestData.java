@@ -9,11 +9,11 @@ import java.util.List;
 
 public class ResumeTestData {
     public static void main(String[] args) {
-        Resume resume = createResume("007", "Elena Nasikovskaia");
-        System.out.println(resume);
+        Resume resume = new Resume("0010", "Elena Nasikovskaia");
+        System.out.println(fillResume(resume.getUuid(), resume.getFullName())); 
     }
 
-    public static Resume createResume(String uuid, String fullName) {
+    public static Resume fillResume(String uuid, String fullName) {
         Resume resume = new Resume(uuid, fullName);
 
         resume.setContact(ContactType.MOBILE_PHONE_NUMBER, "+7-909-139-64-62");
