@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 public class CompanySection extends Section {
-    private static final long serailUID=1L;
+    private static final long SERIAL_VERSION_UID =1L;
 
     private final List<Company> companies;
 
