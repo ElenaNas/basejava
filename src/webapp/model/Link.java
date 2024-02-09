@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 public record Link(String name, String url) implements Serializable {
-    private static final long serailUID=1L;
+    private static final long SERIAL_VERSION_UID =1L;
 
     public Link {
         Objects.requireNonNull(name, "Company name can not be null");

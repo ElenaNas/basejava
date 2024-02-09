@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.*;
 
 public class Resume  implements Comparable<Resume>, Serializable {
-    private static final long serailUID=1L;
+    private static final long SERIAL_VERSION_UID =1L;
 
     private final String uuid;
 

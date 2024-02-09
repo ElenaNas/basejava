@@ -78,7 +78,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
                 resumeList.add(doGet(file));
             }
         } catch (Exception e) {
-            throw new StorageException("Following resumes can not be copied " + directory.getAbsolutePath(), directory.getName());
+            throw new StorageException("Following resumes can not be copied: " + directory.getAbsolutePath(), directory.getName());
         }
         return resumeList;
     }

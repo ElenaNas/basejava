@@ -3,7 +3,6 @@ package webapp.model;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -13,11 +12,11 @@ import static webapp.util.DateUtil.of;
 
 
 public class Company extends Section implements Serializable {
-    private static final long serailUID=1L;
+    private static final long SERIAL_VERSION_UID =1L;
 
     private final Link homePage;
 
-    private List<Occupation> occupationList = new ArrayList<>();
+    private List<Occupation> occupationList;
 
     public Company(String name, String url, Occupation... occupations) {
         this(new Link(name, url), Arrays.asList(occupations));
@@ -57,7 +56,7 @@ public class Company extends Section implements Serializable {
     }
 
     public static class Occupation implements Serializable{
-        private static final long serailUID=1L;
+        private static final long SERIAL_VERSION_UID =1L;
 
         private final LocalDate fromPeriod;
         private final LocalDate tillPeriod;
