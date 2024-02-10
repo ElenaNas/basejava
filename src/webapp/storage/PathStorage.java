@@ -11,21 +11,20 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> implements IStreamStrategy {
 
-    private final Path directory;
+    protected Path pathDirectory;
 
-    protected AbstractPathStorage(String directory) {
-        this.directory = Paths.get(directory);
-        Objects.requireNonNull(this.directory, "Directory can not be null");
-        if (!Files.isDirectory(this.directory) || !Files.isWritable(this.directory)) {
-            throw new IllegalArgumentException(directory + " is not directory or is not writable");
+    protected PathStorage(String pathDirectory) {
+        this.pathDirectory = Paths.get(Objects.requireNonNull(pathDirectory, "Directory can not be null"));
+        if (!Files.isDirectory(this.pathDirectory) || !Files.isWritable(this.pathDirectory)) {
+            throw new IllegalArgumentException(pathDirectory + " is not directory or is not writable");
         }
     }
 
     @Override
     protected Path getSearchKey(String uuid) {
-        return directory.resolve(uuid);
+        return pathDirectory.resolve(uuid);
     }
 
     @Override
@@ -36,7 +35,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected void doSave(Resume resume, Path path) {
         try {
-           Files.createFile(path);
+            Files.createFile(path);
         } catch (IOException e) {
             throw new StorageException("Path with this name can not be created in indicated directory  " + path.toFile().getAbsolutePath(), path.toFile().getName(), e);
         }
@@ -73,16 +72,16 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected List<Resume> doCopy() {
         try {
-            return Files.list(directory).map(this::doGet).collect(Collectors.toList());
+            return Files.list(pathDirectory).map(this::doGet).collect(Collectors.toList());
         } catch (IOException e) {
-            throw new StorageException("Resumes can not be copied to the indicated directory: " + directory.getFileName(), null);
+            throw new StorageException("Resumes can not be copied to the indicated directory: " + pathDirectory.getFileName(), null);
         }
     }
 
     @Override
     public void clear() {
         try {
-            Files.list(directory).forEach(this::doDelete);
+            Files.list(pathDirectory).forEach(this::doDelete);
         } catch (Exception e) {
             throw new StorageException("This file path can not be deleted", null);
         }
@@ -91,13 +90,26 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     public int size() {
         try {
-            return (int) Files.list(directory).count();
+            return (int) Files.list(pathDirectory).count();
         } catch (IOException e) {
             throw new StorageException("Storage size can not be defined", null);
         }
     }
 
-    protected abstract void doWrite(Resume resume, OutputStream outputStream) throws IOException;
 
-    protected abstract Resume doRead(InputStream inputStream) throws IOException;
+    @Override
+    public void doWrite(Resume resume, OutputStream outputStream) throws IOException {
+        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
+            objectOutputStream.writeObject(resume);
+        }
+    }
+
+    @Override
+    public Resume doRead(InputStream inputStream) throws IOException {
+        try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
+            return (Resume) objectInputStream.readObject();
+        } catch (ClassNotFoundException e) {
+            throw new StorageException("Resume can not be read.", null, e);
+        }
+    }
 }
