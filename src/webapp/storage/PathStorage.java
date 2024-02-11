@@ -11,12 +11,15 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
-public class PathStorage extends AbstractStorage<Path> implements IStreamStrategy {
+public class PathStorage extends AbstractStorage<Path> {
 
     protected Path pathDirectory;
 
-    protected PathStorage(String pathDirectory) {
+    protected ObjectStrategyStorage objectStrategyStorage;
+
+    protected PathStorage(String pathDirectory, ObjectStrategyStorage objectStrategyStorage) {
         this.pathDirectory = Paths.get(Objects.requireNonNull(pathDirectory, "Directory can not be null"));
+        this.objectStrategyStorage=objectStrategyStorage;
         if (!Files.isDirectory(this.pathDirectory) || !Files.isWritable(this.pathDirectory)) {
             throw new IllegalArgumentException(pathDirectory + " is not directory or is not writable");
         }
@@ -45,7 +48,7 @@ public class PathStorage extends AbstractStorage<Path> implements IStreamStrateg
     @Override
     protected Resume doGet(Path path) {
         try {
-            return doRead(new BufferedInputStream(Files.newInputStream(path)));
+            return objectStrategyStorage.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Resume can not be found in following directory: ", path.toFile().getName());
         }
@@ -63,7 +66,7 @@ public class PathStorage extends AbstractStorage<Path> implements IStreamStrateg
     @Override
     protected void doUpdate(Resume resume, Path path) {
         try {
-            doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
+            objectStrategyStorage.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Following path can not be created " + path.toFile().getAbsolutePath(), path.toFile().getName(), e);
         }
@@ -93,23 +96,6 @@ public class PathStorage extends AbstractStorage<Path> implements IStreamStrateg
             return (int) Files.list(pathDirectory).count();
         } catch (IOException e) {
             throw new StorageException("Storage size can not be defined", null);
-        }
-    }
-
-
-    @Override
-    public void doWrite(Resume resume, OutputStream outputStream) throws IOException {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
-            objectOutputStream.writeObject(resume);
-        }
-    }
-
-    @Override
-    public Resume doRead(InputStream inputStream) throws IOException {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-            return (Resume) objectInputStream.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("Resume can not be read.", null, e);
         }
     }
 }

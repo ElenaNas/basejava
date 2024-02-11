@@ -8,12 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FileStorage extends AbstractStorage<File> implements IStreamStrategy {
+public class FileStorage extends AbstractStorage<File> {
 
     protected File fileDirectory;
 
-    public FileStorage(File fileDirectory) {
+    protected ObjectStrategyStorage objectStrategyStorage;
+
+    public FileStorage(File fileDirectory, ObjectStrategyStorage objectStrategyStorage) {
         Objects.requireNonNull(fileDirectory, "Directory can not be null");
+        this.objectStrategyStorage=objectStrategyStorage;
         if (!fileDirectory.isDirectory()) {
             throw new IllegalArgumentException(fileDirectory.getAbsolutePath() + " is not a directory");
         }
@@ -46,7 +49,7 @@ public class FileStorage extends AbstractStorage<File> implements IStreamStrateg
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return objectStrategyStorage.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("Error while getting file ", file.getName());
         }
@@ -64,7 +67,7 @@ public class FileStorage extends AbstractStorage<File> implements IStreamStrateg
     @Override
     protected void doUpdate(Resume resume, File file) {
         try {
-            doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
+            objectStrategyStorage.doWrite(resume, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File can not be created " + file.getAbsolutePath(), file.getName(), e);
         }
@@ -96,22 +99,5 @@ public class FileStorage extends AbstractStorage<File> implements IStreamStrateg
     public int size() {
         String[] listFiles = Objects.requireNonNull(fileDirectory.list());
         return listFiles.length;
-    }
-
-
-    @Override
-    public void doWrite(Resume resume, OutputStream outputStream) throws IOException {
-        try (ObjectOutputStream objectOutputStream = new ObjectOutputStream(outputStream)) {
-            objectOutputStream.writeObject(resume);
-        }
-    }
-
-    @Override
-    public Resume doRead(InputStream inputStream) throws IOException {
-        try (ObjectInputStream objectInputStream = new ObjectInputStream(inputStream)) {
-            return (Resume) objectInputStream.readObject();
-        } catch (ClassNotFoundException e) {
-            throw new StorageException("Resume can not be read.", null, e);
-        }
     }
 }
