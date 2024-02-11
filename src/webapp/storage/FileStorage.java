@@ -2,6 +2,7 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
+import webapp.storage.strategy.ObjectStrategyStorage;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class FileStorage extends AbstractStorage<File> {
 
     public FileStorage(File fileDirectory, ObjectStrategyStorage objectStrategyStorage) {
         Objects.requireNonNull(fileDirectory, "Directory can not be null");
-        this.objectStrategyStorage=objectStrategyStorage;
+        this.objectStrategyStorage = objectStrategyStorage;
         if (!fileDirectory.isDirectory()) {
             throw new IllegalArgumentException(fileDirectory.getAbsolutePath() + " is not a directory");
         }
@@ -79,29 +80,31 @@ public class FileStorage extends AbstractStorage<File> {
 
     @Override
     protected List<Resume> doCopy() {
-        File[] listFiles = Objects.requireNonNull(fileDirectory.listFiles());
         List<Resume> resumeList = new ArrayList<>();
-        try {
-            for (File file : listFiles) {
-                resumeList.add(doGet(file));
-            }
-        } catch (Exception e) {
-            throw new StorageException("Following resumes can not be copied: " + fileDirectory.getAbsolutePath(), fileDirectory.getName());
+        for (File file : listFiles()) {
+            resumeList.add(doGet(file));
         }
         return resumeList;
     }
 
     @Override
     public void clear() {
-        File[] listFiles = Objects.requireNonNull(fileDirectory.listFiles());
-        for (File file : listFiles) {
+        for (File file : listFiles()) {
             doDelete(file);
         }
     }
 
     @Override
     public int size() {
-        String[] listFiles = Objects.requireNonNull(fileDirectory.list());
-        return listFiles.length;
+        return listFiles().length;
+    }
+
+    public File[] listFiles() {
+        File[] listFiles = fileDirectory.listFiles();
+        if (listFiles != null) {
+            return listFiles;
+        } else {
+            throw new StorageException("Error while getting list of files from " + fileDirectory.getName(), null);
+        }
     }
 }

@@ -1,4 +1,4 @@
-package webapp.storage;
+package webapp.storage.strategy;
 
 import webapp.model.Resume;
 

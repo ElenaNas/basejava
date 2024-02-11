@@ -1,11 +1,11 @@
-package webapp.storage;
+package webapp.storage.strategy;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStrategyStorage implements IStreamStrategy{
+public class ObjectStrategyStorage implements IStreamStrategy {
 
     @Override
     public void doWrite(Resume resume, OutputStream outputStream) throws IOException {
