@@ -14,6 +14,10 @@ public class FileStorage extends AbstractStorage<File> {
 
     protected ObjectStrategyStorage objectStrategyStorage;
 
+    public void setObjectStrategyStorage(ObjectStrategyStorage objectStrategyStorage) {
+        this.objectStrategyStorage = objectStrategyStorage;
+    }
+
     public FileStorage(File fileDirectory, ObjectStrategyStorage objectStrategyStorage) {
         Objects.requireNonNull(fileDirectory, "Directory can not be null");
         this.objectStrategyStorage=objectStrategyStorage;

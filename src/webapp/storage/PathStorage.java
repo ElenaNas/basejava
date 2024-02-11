@@ -16,6 +16,9 @@ public class PathStorage extends AbstractStorage<Path> {
     protected Path pathDirectory;
 
     protected ObjectStrategyStorage objectStrategyStorage;
+    public void setObjectStrategyStorage(ObjectStrategyStorage objectStrategyStorage) {
+        this.objectStrategyStorage = objectStrategyStorage;
+    }
 
     protected PathStorage(String pathDirectory, ObjectStrategyStorage objectStrategyStorage) {
         this.pathDirectory = Paths.get(Objects.requireNonNull(pathDirectory, "Directory can not be null"));
