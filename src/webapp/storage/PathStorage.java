@@ -2,7 +2,7 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.ObjectStrategyStorage;
+import webapp.storage.strategy.ObjectStreamStrategy;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -15,15 +15,15 @@ import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
 
-    protected Path pathDirectory;
+    private Path pathDirectory;
 
-    protected ObjectStrategyStorage objectStrategyStorage;
+    private ObjectStreamStrategy objectStrategyStorage;
 
-    public void setObjectStrategyStorage(ObjectStrategyStorage objectStrategyStorage) {
+    public void setObjectStrategyStorage(ObjectStreamStrategy objectStrategyStorage) {
         this.objectStrategyStorage = objectStrategyStorage;
     }
 
-    protected PathStorage(String pathDirectory, ObjectStrategyStorage objectStrategyStorage) {
+    protected PathStorage(String pathDirectory, ObjectStreamStrategy objectStrategyStorage) {
         this.pathDirectory = Paths.get(Objects.requireNonNull(pathDirectory, "Directory can not be null"));
         this.objectStrategyStorage = objectStrategyStorage;
         if (!Files.isDirectory(this.pathDirectory) || !Files.isWritable(this.pathDirectory)) {
@@ -46,7 +46,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.createFile(path);
         } catch (IOException e) {
-            throw new StorageException("Path with this name can not be created in indicated directory  " + path.toFile().getAbsolutePath(), path.toFile().getName(), e);
+            throw new StorageException("Path with this name can not be created in indicated directory  " + getFileName(path), e);
         }
         doUpdate(resume, path);
     }
@@ -56,7 +56,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             return objectStrategyStorage.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("Resume can not be found in following directory: ", path.toFile().getName());
+            throw new StorageException("Resume can not be found in following directory: ", getFileName(path));
         }
     }
 
@@ -65,7 +65,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             Files.delete(path);
         } catch (Exception e) {
-            throw new StorageException("Following path can not be deleted: ", path.toFile().getName());
+            throw new StorageException("Following path can not be deleted: ", getFileName(path));
         }
     }
 
@@ -74,7 +74,7 @@ public class PathStorage extends AbstractStorage<Path> {
         try {
             objectStrategyStorage.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
-            throw new StorageException("Following path can not be created " + path.toFile().getAbsolutePath(), path.toFile().getName(), e);
+            throw new StorageException("Following path can not be created " + path.toFile().getAbsolutePath(), getFileName(path), e);
         }
     }
 
@@ -93,11 +93,15 @@ public class PathStorage extends AbstractStorage<Path> {
         return (int) getFileList(pathDirectory).count();
     }
 
-    public Stream<Path> getFileList(Path pathDirectory) {
+    private Stream<Path> getFileList(Path pathDirectory) {
         try {
             return Files.list(pathDirectory);
         } catch (IOException e) {
-            throw new StorageException("Error while fetching resume from " + pathDirectory, null);
+            throw new StorageException("Error while fetching resume from " + pathDirectory, e);
         }
+    }
+
+    private String getFileName(Path path) {
+        return path.toFile().getName();
     }
 }

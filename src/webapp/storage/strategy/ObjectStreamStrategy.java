@@ -5,7 +5,7 @@ import webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStrategyStorage implements IStreamStrategy {
+public class ObjectStreamStrategy implements IStreamStrategy {
 
     @Override
     public void doWrite(Resume resume, OutputStream outputStream) throws IOException {

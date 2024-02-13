@@ -29,18 +29,18 @@ public class MainFile {
         }
 
         File myDir = new File("C:\\Users\\nas-e\\basejava\\src");
-        printDeepName(myDir);
+        printDeepName(myDir, "");
     }
 
-    public static void printDeepName(File file) {
+    public static void printDeepName(File file, String indentation) {
         File[] files = file.listFiles();
         assert files != null;
         for (File f : files) {
             if (f.isFile()) {
-                System.out.println("\tFile: " + f.getName());
+                System.out.println(indentation + "File: " + f.getName());
             } else if (f.isDirectory()) {
-                System.out.println("\n" + "Directory: " + f.getName());
-                printDeepName(f);
+                System.out.println("\n" + indentation + "Directory: " + f.getName());
+                printDeepName(f, indentation + "\t");
             }
         }
     }

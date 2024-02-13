@@ -2,7 +2,7 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.ObjectStrategyStorage;
+import webapp.storage.strategy.ObjectStreamStrategy;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -11,15 +11,15 @@ import java.util.Objects;
 
 public class FileStorage extends AbstractStorage<File> {
 
-    protected File fileDirectory;
+    private File fileDirectory;
 
-    protected ObjectStrategyStorage objectStrategyStorage;
+    private ObjectStreamStrategy objectStrategyStorage;
 
-    public void setObjectStrategyStorage(ObjectStrategyStorage objectStrategyStorage) {
+    public void setObjectStrategyStorage(ObjectStreamStrategy objectStrategyStorage) {
         this.objectStrategyStorage = objectStrategyStorage;
     }
 
-    public FileStorage(File fileDirectory, ObjectStrategyStorage objectStrategyStorage) {
+    public FileStorage(File fileDirectory, ObjectStreamStrategy objectStrategyStorage) {
         Objects.requireNonNull(fileDirectory, "Directory can not be null");
         this.objectStrategyStorage = objectStrategyStorage;
         if (!fileDirectory.isDirectory()) {
@@ -101,10 +101,10 @@ public class FileStorage extends AbstractStorage<File> {
 
     public File[] listFiles() {
         File[] listFiles = fileDirectory.listFiles();
-        if (listFiles != null) {
-            return listFiles;
+        if (listFiles == null) {
+            throw new StorageException("Error while getting list of files from " + fileDirectory.getName(), null, null);
         } else {
-            throw new StorageException("Error while getting list of files from " + fileDirectory.getName(), null);
+            return listFiles;
         }
     }
 }
