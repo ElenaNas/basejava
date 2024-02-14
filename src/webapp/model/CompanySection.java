@@ -1,5 +1,7 @@
 package webapp.model;
 
+import com.google.gson.annotations.Expose;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -7,6 +9,7 @@ import java.util.Objects;
 public class CompanySection extends Section {
     private static final long SERIAL_VERSION_UID =1L;
 
+    @Expose
     private List<Company> companies;
 
     public CompanySection() {

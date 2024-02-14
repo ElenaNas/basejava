@@ -1,5 +1,6 @@
 package webapp.storage;
 
+import com.google.gson.annotations.Expose;
 import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.model.Resume;
@@ -12,6 +13,7 @@ public abstract class AbstractStorage<SK> implements IStorage {
 
     private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
 
+    @Expose
     private static final Comparator<Resume> RESUME_COMPARATOR = Comparator
             .comparing(Resume::getFullName)
             .thenComparing(Resume::getUuid);

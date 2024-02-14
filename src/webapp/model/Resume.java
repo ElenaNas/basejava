@@ -1,5 +1,7 @@
 package webapp.model;
 
+import com.google.gson.annotations.Expose;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,12 +16,15 @@ import java.util.UUID;
 public class Resume  implements Comparable<Resume>, Serializable {
     private static final long SERIAL_VERSION_UID =1L;
 
+   @Expose
     private String uuid;
 
+    @Expose
     private String fullName;
 
-
+    @Expose
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    @Expose
     private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
 
     public String getFullName() {
@@ -64,9 +69,7 @@ public class Resume  implements Comparable<Resume>, Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Resume resume)) return false;
-        return Objects.equals(getUuid(), resume.getUuid()) && Objects.equals(getFullName(),
-                resume.getFullName()) && Objects.equals(contacts, resume.contacts)
-                && Objects.equals(sections, resume.sections);
+        return Objects.equals(getUuid(), resume.getUuid()) && Objects.equals(getFullName(), resume.getFullName()) && Objects.equals(contacts, resume.contacts) && Objects.equals(sections, resume.sections);
     }
 
     @Override
@@ -75,22 +78,17 @@ public class Resume  implements Comparable<Resume>, Serializable {
     }
 
     @Override
-    public int compareTo(Resume other) {
-        int fullNameComparison = this.fullName.compareTo(other.fullName);
-        if (fullNameComparison != 0) {
-            return fullNameComparison;
-        } else {
-            return this.uuid.compareTo(other.uuid);
-        }
+    public int compareTo(Resume o) {
+        return 0;
     }
 
     @Override
     public String toString() {
-        return "\nResume{" +
-                "\nuuid='" + uuid + '\'' +
-                ", \nfullName='" + fullName + '\'' +
-                ", \ncontacts=" + contacts +
-                ", \nsections=" + sections +
+        return "Resume{" +
+                "uuid='" + uuid + '\'' +
+                ", fullName='" + fullName + '\'' +
+                ", contacts=" + contacts +
+                ", sections=" + sections +
                 '}';
     }
 }

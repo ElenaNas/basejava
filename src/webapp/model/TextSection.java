@@ -1,11 +1,14 @@
 package webapp.model;
 
+import com.google.gson.annotations.Expose;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Objects;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TextSection extends Section {
+    @Expose
     private String text;
 
     public TextSection() {

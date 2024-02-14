@@ -1,5 +1,7 @@
 package webapp.model;
 
+import com.google.gson.annotations.Expose;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
@@ -9,7 +11,9 @@ import java.util.Objects;
 public class Link implements Serializable {
     private static final long SERIAL_VERSION_UID = 1L;
 
+    @Expose
     private String name;
+    @Expose
     private String url;
 
     public Link() {

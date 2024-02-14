@@ -1,6 +1,8 @@
 package webapp.model;
 
-import webapp.util.LocalDateAdapter;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.google.gson.annotations.Expose;
+import webapp.util.LocalDateXMLAdapter;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -20,8 +22,10 @@ import static webapp.util.DateUtil.of;
 public class Company extends Section implements Serializable {
     private static final long SERIAL_VERSION_UID = 1L;
 
+    @Expose
     private Link homePage;
 
+    @Expose
     private List<Occupation> occupationList;
 
     public Company() {
@@ -68,11 +72,17 @@ public class Company extends Section implements Serializable {
     public static class Occupation implements Serializable {
         private static final long SERIAL_VERSION_UID = 1L;
 
-        @XmlJavaTypeAdapter(LocalDateAdapter.class)
-        protected LocalDate fromPeriod;
-        @XmlJavaTypeAdapter(LocalDateAdapter.class)
-        private LocalDate tillPeriod;
+        @XmlJavaTypeAdapter(LocalDateXMLAdapter.class)
+        @Expose
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        public LocalDate fromPeriod;
+        @XmlJavaTypeAdapter(LocalDateXMLAdapter.class)
+        @Expose
+        @JsonFormat(pattern = "yyyy-MM-dd")
+        public LocalDate tillPeriod;
+        @Expose
         private String jobTitle;
+        @Expose
         private String jobDescription;
 
         public Occupation() {
@@ -116,17 +126,13 @@ public class Company extends Section implements Serializable {
         @Override
         public boolean equals(Object o) {
             if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            Occupation position = (Occupation) o;
-            return Objects.equals(fromPeriod, position.fromPeriod) &&
-                    Objects.equals(tillPeriod, position.tillPeriod) &&
-                    Objects.equals(jobTitle, position.jobTitle) &&
-                    Objects.equals(jobDescription, position.jobDescription);
+            if (!(o instanceof Occupation that)) return false;
+            return Objects.equals(getFromPeriod(), that.getFromPeriod()) && Objects.equals(getTillPeriod(), that.getTillPeriod()) && Objects.equals(getJobTitle(), that.getJobTitle()) && Objects.equals(getJobDescription(), that.getJobDescription());
         }
 
         @Override
         public int hashCode() {
-            return Objects.hash(fromPeriod, tillPeriod, jobTitle, jobDescription);
+            return Objects.hash(getFromPeriod(), getTillPeriod(), getJobTitle(), getJobDescription());
         }
 
         @Override
