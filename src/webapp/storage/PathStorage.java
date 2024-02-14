@@ -2,9 +2,11 @@ package webapp.storage;
 
 import webapp.exception.StorageException;
 import webapp.model.Resume;
-import webapp.storage.strategy.ObjectStreamStrategy;
+import webapp.storage.strategy.IStreamStrategy;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -17,15 +19,11 @@ public class PathStorage extends AbstractStorage<Path> {
 
     private Path pathDirectory;
 
-    private ObjectStreamStrategy objectStrategyStorage;
+    IStreamStrategy iStreamStrategy;
 
-    public void setObjectStrategyStorage(ObjectStreamStrategy objectStrategyStorage) {
-        this.objectStrategyStorage = objectStrategyStorage;
-    }
-
-    protected PathStorage(String pathDirectory, ObjectStreamStrategy objectStrategyStorage) {
+    public PathStorage(String pathDirectory, IStreamStrategy iStreamStrategy) {
         this.pathDirectory = Paths.get(Objects.requireNonNull(pathDirectory, "Directory can not be null"));
-        this.objectStrategyStorage = objectStrategyStorage;
+        this.iStreamStrategy=iStreamStrategy;
         if (!Files.isDirectory(this.pathDirectory) || !Files.isWritable(this.pathDirectory)) {
             throw new IllegalArgumentException(pathDirectory + " is not directory or is not writable");
         }
@@ -54,7 +52,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return objectStrategyStorage.doRead(new BufferedInputStream(Files.newInputStream(path)));
+            return iStreamStrategy.doRead(new BufferedInputStream(Files.newInputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Resume can not be found in following directory: ", getFileName(path));
         }
@@ -72,7 +70,7 @@ public class PathStorage extends AbstractStorage<Path> {
     @Override
     protected void doUpdate(Resume resume, Path path) {
         try {
-            objectStrategyStorage.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
+            iStreamStrategy.doWrite(resume, new BufferedOutputStream(Files.newOutputStream(path)));
         } catch (IOException e) {
             throw new StorageException("Following path can not be created " + path.toFile().getAbsolutePath(), getFileName(path), e);
         }

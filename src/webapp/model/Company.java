@@ -1,5 +1,10 @@
 package webapp.model;
 
+import webapp.util.LocalDateAdapter;
+
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
@@ -11,12 +16,16 @@ import static webapp.util.DateUtil.NOW;
 import static webapp.util.DateUtil.of;
 
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Company extends Section implements Serializable {
-    private static final long SERIAL_VERSION_UID =1L;
+    private static final long SERIAL_VERSION_UID = 1L;
 
-    private final Link homePage;
+    private Link homePage;
 
     private List<Occupation> occupationList;
+
+    public Company() {
+    }
 
     public Company(String name, String url, Occupation... occupations) {
         this(new Link(name, url), Arrays.asList(occupations));
@@ -55,13 +64,19 @@ public class Company extends Section implements Serializable {
         return Objects.hash(homePage, getOccupationList());
     }
 
-    public static class Occupation implements Serializable{
-        private static final long SERIAL_VERSION_UID =1L;
+    @XmlAccessorType(XmlAccessType.FIELD)
+    public static class Occupation implements Serializable {
+        private static final long SERIAL_VERSION_UID = 1L;
 
-        private final LocalDate fromPeriod;
-        private final LocalDate tillPeriod;
-        private final String jobTitle;
-        private final String jobDescription;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        protected LocalDate fromPeriod;
+        @XmlJavaTypeAdapter(LocalDateAdapter.class)
+        private LocalDate tillPeriod;
+        private String jobTitle;
+        private String jobDescription;
+
+        public Occupation() {
+        }
 
         public Occupation(int startYear, Month fromPeriod, String jobTitle, String jobDescription) {
             this(of(startYear, fromPeriod), NOW, jobTitle, jobDescription);

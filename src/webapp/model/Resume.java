@@ -1,14 +1,22 @@
 package webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import java.io.Serializable;
-import java.util.*;
+import java.util.EnumMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Resume  implements Comparable<Resume>, Serializable {
     private static final long SERIAL_VERSION_UID =1L;
 
-    private final String uuid;
+    private String uuid;
 
-    private final String fullName;
+    private String fullName;
 
 
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
@@ -16,6 +24,9 @@ public class Resume  implements Comparable<Resume>, Serializable {
 
     public String getFullName() {
         return fullName;
+    }
+
+    public Resume() {
     }
 
     public Resume(String fullName) {
@@ -51,19 +62,16 @@ public class Resume  implements Comparable<Resume>, Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null || getClass() != o.getClass()) {
-            return false;
-        }
-        Resume resume = (Resume) o;
-        return uuid.equals(resume.uuid) && fullName.equals(resume.fullName);
+        if (this == o) return true;
+        if (!(o instanceof Resume resume)) return false;
+        return Objects.equals(getUuid(), resume.getUuid()) && Objects.equals(getFullName(),
+                resume.getFullName()) && Objects.equals(contacts, resume.contacts)
+                && Objects.equals(sections, resume.sections);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUuid(), getFullName());
+        return Objects.hash(getUuid(), getFullName(), contacts, sections);
     }
 
     @Override

@@ -1,13 +1,24 @@
 package webapp.model;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.io.Serializable;
 import java.util.Objects;
 
-public record Link(String name, String url) implements Serializable {
-    private static final long SERIAL_VERSION_UID =1L;
+@XmlAccessorType(XmlAccessType.FIELD)
+public class Link implements Serializable {
+    private static final long SERIAL_VERSION_UID = 1L;
 
-    public Link {
+    private String name;
+    private String url;
+
+    public Link() {
+    }
+
+    public Link(String name, String url) {
         Objects.requireNonNull(name, "Company name can not be null");
+        this.name = name;
+        this.url = url;
     }
 
     @Override
@@ -19,14 +30,14 @@ public record Link(String name, String url) implements Serializable {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof Link link)) return false;
-        return Objects.equals(name(), link.name()) && Objects.equals(url(), link.url());
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Link link)) return false;
+        return Objects.equals(name, link.name) && Objects.equals(url, link.url);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name(), url());
+        return Objects.hash(name, url);
     }
 }

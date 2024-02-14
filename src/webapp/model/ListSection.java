@@ -7,7 +7,10 @@ import java.util.Objects;
 public class ListSection extends Section {
     private static final long SERIAL_VERSION_UID =1L;
 
-    private final List<String> dataList;
+    private List<String> dataList;
+
+    public ListSection() {
+    }
 
     public ListSection(List<String> dataList) {
         Objects.requireNonNull(dataList, "items must not be null");
