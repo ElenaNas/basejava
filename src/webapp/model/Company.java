@@ -40,7 +40,7 @@ public class Company extends Section implements Serializable {
         this.occupationList = occupationList;
     }
 
-    protected List<Occupation> getOccupationList() {
+    public List<Occupation> getOccupationList() {
         return occupationList;
     }
 
@@ -75,17 +75,25 @@ public class Company extends Section implements Serializable {
         @XmlJavaTypeAdapter(LocalDateXMLAdapter.class)
         @Expose
         @JsonFormat(pattern = "yyyy-MM-dd")
-        public LocalDate fromPeriod;
+        private LocalDate fromPeriod;
         @XmlJavaTypeAdapter(LocalDateXMLAdapter.class)
         @Expose
         @JsonFormat(pattern = "yyyy-MM-dd")
-        public LocalDate tillPeriod;
+        private LocalDate tillPeriod;
         @Expose
         private String jobTitle;
         @Expose
         private String jobDescription;
 
         public Occupation() {
+        }
+
+        public void setFromPeriod(LocalDate fromPeriod) {
+            this.fromPeriod = fromPeriod;
+        }
+
+        public void setTillPeriod(LocalDate tillPeriod) {
+            this.tillPeriod = tillPeriod;
         }
 
         public Occupation(int startYear, Month fromPeriod, String jobTitle, String jobDescription) {
@@ -117,6 +125,14 @@ public class Company extends Section implements Serializable {
 
         public String getJobTitle() {
             return jobTitle;
+        }
+
+        public void setJobTitle(String jobTitle) {
+            this.jobTitle = jobTitle;
+        }
+
+        public void setJobDescription(String jobDescription) {
+            this.jobDescription = jobDescription;
         }
 
         public String getJobDescription() {

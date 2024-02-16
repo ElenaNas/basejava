@@ -24,8 +24,25 @@ public class Resume  implements Comparable<Resume>, Serializable {
 
     @Expose
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+
+    public Map<ContactType, String> getContacts() {
+        return contacts;
+    }
+
     @Expose
     private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
+
+    public Map<SectionType, Section> getSections() {
+        return sections;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
 
     public String getFullName() {
         return fullName;
@@ -65,16 +82,24 @@ public class Resume  implements Comparable<Resume>, Serializable {
         sections.put(sectionType, section);
     }
 
+    public void addContact(ContactType type, String value) {
+        contacts.put(type, value);
+    }
+
+    public void addSection(SectionType type, Section section) {
+        sections.put(type, section);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Resume resume)) return false;
-        return Objects.equals(getUuid(), resume.getUuid()) && Objects.equals(getFullName(), resume.getFullName()) && Objects.equals(contacts, resume.contacts) && Objects.equals(sections, resume.sections);
+        return Objects.equals(getUuid(), resume.getUuid()) && Objects.equals(getFullName(), resume.getFullName()) && Objects.equals(getContacts(), resume.getContacts()) && Objects.equals(getSections(), resume.getSections());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getUuid(), getFullName(), contacts, sections);
+        return Objects.hash(getUuid(), getFullName(), getContacts(), getSections());
     }
 
     @Override

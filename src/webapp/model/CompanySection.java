@@ -10,7 +10,7 @@ public class CompanySection extends Section {
     private static final long SERIAL_VERSION_UID =1L;
 
     @Expose
-    private List<Company> companies;
+    private static List<Company> companies;
 
     public CompanySection() {
     }
@@ -21,7 +21,7 @@ public class CompanySection extends Section {
 
     public CompanySection(List<Company> companies) {
         Objects.requireNonNull(companies, "Company can not be null");
-        this.companies = companies;
+        CompanySection.companies = companies;
     }
 
     public List<Company> getCompanies() {
