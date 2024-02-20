@@ -5,134 +5,139 @@ import webapp.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
 public class DataStreamStorage implements IStreamStrategy {
+
     @Override
     public void doWrite(Resume resume, OutputStream outputStream) throws IOException {
-        try (
-                DataOutputStream dataOutputStream = new DataOutputStream(outputStream)
-        ) {
+        try (DataOutputStream dataOutputStream = new DataOutputStream(outputStream)) {
+
             dataOutputStream.writeUTF(resume.getUuid());
             dataOutputStream.writeUTF(resume.getFullName());
-            dataOutputStream.writeInt(resume.getContacts().size());
+            writeContacts(dataOutputStream, resume.getContacts());
+            writeSections(dataOutputStream, resume.getSections());
+        }
+    }
 
-            for (Map.Entry<ContactType, String> entry : resume.getContacts().entrySet()) {
-                dataOutputStream.writeUTF(entry.getKey().name());
-                dataOutputStream.writeUTF(entry.getValue());
-            }
+    private void writeContacts(DataOutputStream dataOutputStream, Map<ContactType, String> contacts) throws IOException {
+        dataOutputStream.writeInt(contacts.size());
+        for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            dataOutputStream.writeUTF(entry.getKey().name());
+            dataOutputStream.writeUTF(entry.getValue());
+        }
+    }
 
-            Map<SectionType, Section> sections = resume.getSections();
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
-                SectionType type = entry.getKey();
-                Section section = entry.getValue();
-                dataOutputStream.writeUTF(type.name());
+    private void writeSections(DataOutputStream dataOutputStream, Map<SectionType, Section> sections) throws IOException {
+        dataOutputStream.writeInt(sections.size());
+        for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
+            writeSection(dataOutputStream, entry.getKey(), entry.getValue());
+        }
+    }
 
-                switch (type) {
-                    case PERSONAL, OBJECTIVE:
-                        dataOutputStream.writeUTF(((TextSection) section).getText());
-                        break;
-                    case QUALIFICATIONS, ACHIEVEMENTS:
-                        writeCollection(dataOutputStream, ((ListSection) section).getDataList());
-                        break;
-                    case EDUCATION, EXPERIENCE:
-                        for (Company company : ((CompanySection) section).getCompanies()) {
-                            writeOccupation(company, dataOutputStream);
-                        }
+    private void writeSection(DataOutputStream dataOutputStream, SectionType sectionType, Section section) throws IOException {
+        dataOutputStream.writeUTF(sectionType.name());
+        switch (sectionType) {
+            case PERSONAL:
+            case OBJECTIVE:
+                dataOutputStream.writeUTF(((TextSection) section).getText());
+                break;
+            case ACHIEVEMENTS:
+            case QUALIFICATIONS:
+                List<String> dataList = ((ListSection) section).getDataList();
+                dataOutputStream.writeInt(dataList.size());
+                for (String data : dataList) {
+                    dataOutputStream.writeUTF(data);
                 }
                 break;
-            }
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            case EXPERIENCE:
+            case EDUCATION:
+                List<Company> companies = ((CompanySection) section).getCompanies();
+                dataOutputStream.writeInt(companies.size());
+                for (Company company : companies) {
+                    dataOutputStream.writeUTF(company.getHomePage().toString());
+                    dataOutputStream.writeUTF(company.toString());
+                    writeOccupations(dataOutputStream, company.getOccupationList());
+                }
+                break;
         }
     }
 
-    private <T> void writeCollection(DataOutputStream dataOutputStream, Collection<T> dataList) throws IOException, ClassNotFoundException {
-        dataOutputStream.writeInt(dataList.size());
-        for (T t : dataList) {
-            dataOutputStream.writeUTF(String.valueOf(t));
+    private void writeOccupations(DataOutputStream dataOutputStream, List<Company.Occupation> occupations) throws IOException {
+        dataOutputStream.writeInt(occupations.size());
+        for (Company.Occupation occupation : occupations) {
+            writeLocalDate(dataOutputStream, occupation.getFromPeriod());
+            writeLocalDate(dataOutputStream, occupation.getTillPeriod());
+            dataOutputStream.writeUTF(occupation.getJobTitle());
+            dataOutputStream.writeUTF(occupation.getJobDescription());
         }
     }
 
-    public void writeOccupation(Company company,
-                                DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeUTF(String.valueOf(company.toString()));
-        dataOutputStream.writeUTF(String.valueOf(company.getHomePage()));
-        for (Company.Occupation occupations : company.getOccupationList()) {
-            dataOutputStream.writeUTF(String.valueOf(occupations.getFromPeriod()));
-            dataOutputStream.writeUTF(String.valueOf(occupations.getTillPeriod()));
-            dataOutputStream.writeUTF(String.valueOf(occupations.getJobTitle()));
-            dataOutputStream.writeUTF(String.valueOf(occupations.getJobDescription()));
-        }
+    private void writeLocalDate(DataOutputStream dataOutputStream, LocalDate localDate) throws IOException {
+        dataOutputStream.writeInt(localDate.getYear());
+        dataOutputStream.writeInt(localDate.getMonth().getValue());
     }
 
     @Override
-    public Resume doRead(InputStream inputStream) throws IOException {
-        try (
-                DataInputStream dataInputStream = new DataInputStream(inputStream)
-        ) {
+    public Resume doRead(InputStream is) throws IOException {
+        try (DataInputStream dataInputStream = new DataInputStream(is)) {
             String uuid = dataInputStream.readUTF();
             String fullName = dataInputStream.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            int contactsSize = dataInputStream.readInt();
-            for (int i = 0; i < contactsSize; i++) {
-                resume.addContact(ContactType.valueOf(dataInputStream.readUTF()), dataInputStream.readUTF());
-            }
-
-            Map<SectionType, Section> sections = resume.getSections();
-            for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
-                SectionType type = entry.getKey();
-                Section section = entry.getValue();
-                SectionType sectionType = SectionType.valueOf(dataInputStream.readUTF());
-                resume.addSection(sectionType, readSection(dataInputStream, sectionType, section));
-            }
+            readContacts(dataInputStream, resume);
+            readSections(dataInputStream, resume);
             return resume;
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException(e);
         }
     }
 
-
-    private Section readSection(DataInputStream dataInputStream, SectionType type, Section section) throws IOException, ClassNotFoundException {
-        switch (type) {
-            case PERSONAL, OBJECTIVE:
-                return new TextSection(dataInputStream.readUTF());
-            case ACHIEVEMENTS, QUALIFICATIONS:
-                return new ListSection(String.valueOf(readList(dataInputStream, new ObjectInputStream(dataInputStream))));
-            case EDUCATION, EXPERIENCE:
-                for (Company company : ((CompanySection) section).getCompanies()) {
-                    return new CompanySection((List<Company>) readOccupation(company, dataInputStream));
-                }
-            default:
-                throw new IllegalStateException();
-        }
-    }
-
-
-    private List<Company> readList(DataInputStream dataInputStream, ObjectInputStream objectInputStream) throws IOException, ClassNotFoundException {
+    private void readContacts(DataInputStream dataInputStream, Resume resume) throws IOException {
         int size = dataInputStream.readInt();
-        List<Company> list = new ArrayList<>(size);
         for (int i = 0; i < size; i++) {
-            list.add((Company) objectInputStream.readObject());
+            ContactType contactType = ContactType.valueOf(dataInputStream.readUTF());
+            String contactValue = dataInputStream.readUTF();
+            resume.addContact(contactType, contactValue);
+        }
+    }
+
+    private void readSections(DataInputStream dataInputStream, Resume resume) throws IOException {
+        int size = dataInputStream.readInt();
+        for (int i = 0; i < size; i++) {
+            SectionType sectionType = SectionType.valueOf(dataInputStream.readUTF());
+            Section section = readSection(dataInputStream, sectionType);
+            resume.addSection(sectionType, section);
+        }
+    }
+
+    private Section readSection(DataInputStream dataInputStream, SectionType sectionType) throws IOException {
+        return switch (sectionType) {
+            case PERSONAL, OBJECTIVE -> new TextSection(dataInputStream.readUTF());
+            case ACHIEVEMENTS, QUALIFICATIONS -> new ListSection(readOccupations(dataInputStream, dataInputStream::readUTF));
+            case EXPERIENCE, EDUCATION -> new CompanySection(
+                    readOccupations(dataInputStream, () -> new Company(
+                            new Link(dataInputStream.readUTF(), dataInputStream.readUTF()),
+                            readOccupations(dataInputStream, () -> new Company.Occupation(
+                                    readLocalDate(dataInputStream), readLocalDate(dataInputStream), dataInputStream.readUTF(), dataInputStream.readUTF()
+                            ))
+                    )));
+        };
+    }
+
+    private <T> List<T> readOccupations(DataInputStream dis, Reader<T> reader) throws IOException {
+        int size = dis.readInt();
+        List<T> list = new ArrayList<>(size);
+        for (int i = 0; i < size; i++) {
+            list.add(reader.read());
         }
         return list;
     }
 
+    private LocalDate readLocalDate(DataInputStream dataInputStream) throws IOException {
+        return LocalDate.of(dataInputStream.readInt(), dataInputStream.readInt(), 1);
+    }
 
-    public Company.Occupation readOccupation(Company company, DataInputStream dataInputStream) throws IOException {
-        String companyName = dataInputStream.readUTF();
-        String homePage = dataInputStream.readUTF();
-        Company.Occupation occupation = new Company.Occupation();
-        int occupationsSize = company.getOccupationList().size();
-        for (int i = 0; i < occupationsSize; i++) {
-            occupation.setFromPeriod(LocalDate.parse(dataInputStream.readUTF()));
-            occupation.setTillPeriod(LocalDate.parse(dataInputStream.readUTF()));
-            occupation.setJobTitle(dataInputStream.readUTF());
-            occupation.setJobDescription(dataInputStream.readUTF());
-        }
-        return occupation;
+    private interface Reader<T> {
+        T read() throws IOException;
     }
 }
 

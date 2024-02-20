@@ -28,6 +28,10 @@ public class Company extends Section implements Serializable {
     @Expose
     private List<Occupation> occupationList;
 
+    public void setOccupationList(List<Occupation> occupationList) {
+        this.occupationList = occupationList;
+    }
+
     public Company() {
     }
 
