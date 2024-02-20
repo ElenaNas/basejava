@@ -39,20 +39,15 @@ public class DataStreamStorage implements IStreamStrategy {
     private void writeSection(DataOutputStream dataOutputStream, SectionType sectionType, Section section) throws IOException {
         dataOutputStream.writeUTF(sectionType.name());
         switch (sectionType) {
-            case PERSONAL:
-            case OBJECTIVE:
-                dataOutputStream.writeUTF(((TextSection) section).getText());
-                break;
-            case ACHIEVEMENTS:
-            case QUALIFICATIONS:
+            case PERSONAL, OBJECTIVE -> dataOutputStream.writeUTF(((TextSection) section).getText());
+            case ACHIEVEMENTS, QUALIFICATIONS -> {
                 List<String> dataList = ((ListSection) section).getDataList();
                 dataOutputStream.writeInt(dataList.size());
                 for (String data : dataList) {
                     dataOutputStream.writeUTF(data);
                 }
-                break;
-            case EXPERIENCE:
-            case EDUCATION:
+            }
+            case EXPERIENCE, EDUCATION -> {
                 List<Company> companies = ((CompanySection) section).getCompanies();
                 dataOutputStream.writeInt(companies.size());
                 for (Company company : companies) {
@@ -60,7 +55,7 @@ public class DataStreamStorage implements IStreamStrategy {
                     dataOutputStream.writeUTF(company.toString());
                     writeOccupations(dataOutputStream, company.getOccupationList());
                 }
-                break;
+            }
         }
     }
 
