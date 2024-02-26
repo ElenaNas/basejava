@@ -5,8 +5,8 @@ import webapp.model.*;
 import java.io.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 
 public class DataStreamStorage implements IStreamStrategy {
 
@@ -16,24 +16,26 @@ public class DataStreamStorage implements IStreamStrategy {
 
             dataOutputStream.writeUTF(resume.getUuid());
             dataOutputStream.writeUTF(resume.getFullName());
-            writeContacts(dataOutputStream, resume.getContacts());
-            writeSections(dataOutputStream, resume.getSections());
+
+            writeCollection(dataOutputStream, resume.getContacts().entrySet(),
+                    (entry) -> {
+                        dataOutputStream.writeUTF(entry.getKey().name());
+                        dataOutputStream.writeUTF(entry.getValue());
+                    });
+            writeCollection(dataOutputStream, resume.getSections().entrySet(),
+                    (entry) -> writeSection(dataOutputStream, entry.getKey(), entry.getValue()));
         }
     }
 
-    private void writeContacts(DataOutputStream dataOutputStream, Map<ContactType, String> contacts) throws IOException {
-        dataOutputStream.writeInt(contacts.size());
-        for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
-            dataOutputStream.writeUTF(entry.getKey().name());
-            dataOutputStream.writeUTF(entry.getValue());
+    private <T> void writeCollection(DataOutputStream dos, Collection<T> collection, Writer<T> writer) throws IOException {
+        dos.writeInt(collection.size());
+        for (T item : collection) {
+            writer.write(item);
         }
     }
 
-    private void writeSections(DataOutputStream dataOutputStream, Map<SectionType, Section> sections) throws IOException {
-        dataOutputStream.writeInt(sections.size());
-        for (Map.Entry<SectionType, Section> entry : sections.entrySet()) {
-            writeSection(dataOutputStream, entry.getKey(), entry.getValue());
-        }
+    private String getCompanyString(Company company) {
+        return company.getHomePage().toString() + " " + company;
     }
 
     private void writeSection(DataOutputStream dataOutputStream, SectionType sectionType, Section section) throws IOException {
@@ -42,30 +44,24 @@ public class DataStreamStorage implements IStreamStrategy {
             case PERSONAL, OBJECTIVE -> dataOutputStream.writeUTF(((TextSection) section).getText());
             case ACHIEVEMENTS, QUALIFICATIONS -> {
                 List<String> dataList = ((ListSection) section).getDataList();
-                dataOutputStream.writeInt(dataList.size());
-                for (String data : dataList) {
-                    dataOutputStream.writeUTF(data);
-                }
+                writeCollection(dataOutputStream, dataList,
+                        dataOutputStream::writeUTF);
             }
             case EXPERIENCE, EDUCATION -> {
                 List<Company> companies = ((CompanySection) section).getCompanies();
-                dataOutputStream.writeInt(companies.size());
-                for (Company company : companies) {
-                    dataOutputStream.writeUTF(company.getHomePage().toString());
-                    dataOutputStream.writeUTF(company.toString());
-                    writeOccupations(dataOutputStream, company.getOccupationList());
-                }
+                writeCollection(dataOutputStream, companies,
+                        (company) -> {
+                            dataOutputStream.writeUTF(company.getHomePage().toString());
+                            dataOutputStream.writeUTF(getCompanyString(company));
+                            writeCollection(dataOutputStream, company.getOccupationList(),
+                                    (occupation) -> {
+                                        writeLocalDate(dataOutputStream, occupation.getFromPeriod());
+                                        writeLocalDate(dataOutputStream, occupation.getTillPeriod());
+                                        dataOutputStream.writeUTF(occupation.getJobTitle());
+                                        dataOutputStream.writeUTF(occupation.getJobDescription());
+                                    });
+                        });
             }
-        }
-    }
-
-    private void writeOccupations(DataOutputStream dataOutputStream, List<Company.Occupation> occupations) throws IOException {
-        dataOutputStream.writeInt(occupations.size());
-        for (Company.Occupation occupation : occupations) {
-            writeLocalDate(dataOutputStream, occupation.getFromPeriod());
-            writeLocalDate(dataOutputStream, occupation.getTillPeriod());
-            dataOutputStream.writeUTF(occupation.getJobTitle());
-            dataOutputStream.writeUTF(occupation.getJobDescription());
         }
     }
 
@@ -107,7 +103,8 @@ public class DataStreamStorage implements IStreamStrategy {
     private Section readSection(DataInputStream dataInputStream, SectionType sectionType) throws IOException {
         return switch (sectionType) {
             case PERSONAL, OBJECTIVE -> new TextSection(dataInputStream.readUTF());
-            case ACHIEVEMENTS, QUALIFICATIONS -> new ListSection(readOccupations(dataInputStream, dataInputStream::readUTF));
+            case ACHIEVEMENTS, QUALIFICATIONS ->
+                    new ListSection(readOccupations(dataInputStream, dataInputStream::readUTF));
             case EXPERIENCE, EDUCATION -> new CompanySection(
                     readOccupations(dataInputStream, () -> new Company(
                             new Link(dataInputStream.readUTF(), dataInputStream.readUTF()),
@@ -133,6 +130,10 @@ public class DataStreamStorage implements IStreamStrategy {
 
     private interface Reader<T> {
         T read() throws IOException;
+    }
+
+    private interface Writer<T> {
+        void write(T item) throws IOException;
     }
 }
 
