@@ -76,27 +76,24 @@ public class DataStreamStorage implements IStreamStrategy {
             String uuid = dataInputStream.readUTF();
             String fullName = dataInputStream.readUTF();
             Resume resume = new Resume(uuid, fullName);
-            readContacts(dataInputStream, resume);
-            readSections(dataInputStream, resume);
+            readLines(dataInputStream, () -> {
+                ContactType contactType = ContactType.valueOf(dataInputStream.readUTF());
+                String contactValue = dataInputStream.readUTF();
+                resume.addContact(contactType, contactValue);
+            });
+            readLines(dataInputStream, () -> {
+                SectionType sectionType = SectionType.valueOf(dataInputStream.readUTF());
+                Section section = readSection(dataInputStream, sectionType);
+                resume.addSection(sectionType, section);
+            });
             return resume;
         }
     }
 
-    private void readContacts(DataInputStream dataInputStream, Resume resume) throws IOException {
+    private void readLines(DataInputStream dataInputStream, DataReader dataReader) throws IOException {
         int size = dataInputStream.readInt();
         for (int i = 0; i < size; i++) {
-            ContactType contactType = ContactType.valueOf(dataInputStream.readUTF());
-            String contactValue = dataInputStream.readUTF();
-            resume.addContact(contactType, contactValue);
-        }
-    }
-
-    private void readSections(DataInputStream dataInputStream, Resume resume) throws IOException {
-        int size = dataInputStream.readInt();
-        for (int i = 0; i < size; i++) {
-            SectionType sectionType = SectionType.valueOf(dataInputStream.readUTF());
-            Section section = readSection(dataInputStream, sectionType);
-            resume.addSection(sectionType, section);
+            dataReader.readData();
         }
     }
 
@@ -126,6 +123,10 @@ public class DataStreamStorage implements IStreamStrategy {
 
     private LocalDate readLocalDate(DataInputStream dataInputStream) throws IOException {
         return LocalDate.of(dataInputStream.readInt(), dataInputStream.readInt(), 1);
+    }
+
+    private interface DataReader {
+        void readData() throws IOException;
     }
 
     private interface Reader<T> {
