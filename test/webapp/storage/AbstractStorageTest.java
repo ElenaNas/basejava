@@ -2,10 +2,11 @@ package webapp.storage;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import webapp.Config;
 import webapp.exception.ExistStorageException;
 import webapp.exception.NotExistStorageException;
 import webapp.exception.StorageException;
-import webapp.model.*;
+import webapp.model.Resume;
 
 import java.io.File;
 import java.util.Arrays;
@@ -15,7 +16,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIRECTORY = new File("C:\\Users\\nas-e\\basejava\\src\\webapp\\storageSer");
+    //protected static final File STORAGE_DIRECTORY = new File("C:\\Users\\nas-e\\basejava\\src\\webapp\\storageSer");
+    protected static final File STORAGE_DIRECTORY = Config.get().getStorageDir();
 
     protected IStorage storage;
 
@@ -41,19 +43,19 @@ public abstract class AbstractStorageTest {
 
         ResumeTestData.fillResume(RESUME_1.getUuid(), RESUME_1.getFullName());
 
-        RESUME_1.setContact(ContactType.MOBILE_PHONE_NUMBER, "+7-909-139-64-62");
-        RESUME_1.setContact(ContactType.EMAIL, "nas-elena@yandex.ru");
-        RESUME_1.setContact(ContactType.SKYPE, "MySkype");
-        RESUME_1.setContact(ContactType.HOME_PAGE, "MyHomePage");
-        RESUME_1.setContact(ContactType.GITHUB_ACCOUNT, "https://github.com/ElenaNas");
-        RESUME_1.setContact(ContactType.LINKEDIN_ACCOUNT, "www.linkedin.com/in/elena-n-a5454a2a7");
-        RESUME_1.setContact(ContactType.STACKOVERFLOW_ACCOUNT, "MyStackoverflow");
-
-        Section objectiveText = new TextSection("MyObjective");
-        RESUME_1.setSection(SectionType.OBJECTIVE, objectiveText);
-
-        Section personalText = new TextSection("My personal characteristics");
-        RESUME_1.setSection(SectionType.PERSONAL, personalText);
+//        RESUME_1.setContact(ContactType.MOBILE_PHONE_NUMBER, "+7-909-139-64-62");
+//        RESUME_1.setContact(ContactType.EMAIL, "nas-elena@yandex.ru");
+//        RESUME_1.setContact(ContactType.SKYPE, "MySkype");
+//        RESUME_1.setContact(ContactType.HOME_PAGE, "MyHomePage");
+//        RESUME_1.setContact(ContactType.GITHUB_ACCOUNT, "https://github.com/ElenaNas");
+//        RESUME_1.setContact(ContactType.LINKEDIN_ACCOUNT, "www.linkedin.com/in/elena-n-a5454a2a7");
+//        RESUME_1.setContact(ContactType.STACKOVERFLOW_ACCOUNT, "MyStackoverflow");
+//
+//        Section objectiveText = new TextSection("MyObjective");
+//        RESUME_1.setSection(SectionType.OBJECTIVE, objectiveText);
+//
+//        Section personalText = new TextSection("My personal characteristics");
+//        RESUME_1.setSection(SectionType.PERSONAL, personalText);
 
 //        List<String> achievementsList = new ArrayList<>();
 //        achievementsList.add("Achievement1");
@@ -202,3 +204,4 @@ public abstract class AbstractStorageTest {
         assertEquals(resume, storage.get(resume.getUuid()));
     }
 }
+
