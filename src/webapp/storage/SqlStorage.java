@@ -24,7 +24,7 @@ public class SqlStorage implements IStorage {
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.execute("UPDATE resume SET full_name = ? WHERE uuid = ?", preparedStatement -> {
+        sqlHelper.<Void>execute("UPDATE resume SET full_name = ? WHERE uuid = ?", preparedStatement -> {
             preparedStatement.setString(1, resume.getFullName());
             preparedStatement.setString(2, resume.getUuid());
             if (preparedStatement.executeUpdate() == 0) {
@@ -58,7 +58,7 @@ public class SqlStorage implements IStorage {
 
     @Override
     public void delete(String uuid) {
-        sqlHelper.execute("DELETE FROM resume WHERE uuid=?", preparedStatement -> {
+        sqlHelper.<Void>execute("DELETE FROM resume WHERE uuid=?", preparedStatement -> {
             preparedStatement.setString(1, uuid);
             if (preparedStatement.executeUpdate() == 0) {
                 throw new NotExistStorageException(uuid);
