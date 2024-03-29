@@ -26,11 +26,10 @@ public class SqlHelper {
         }
     }
 
-    public <T> void transactionalExecute(SqlTransaction<T> executor) {
+    public void transactionalExecute() {
         try (Connection connection = connectionFactory.getConnection()) {
             try {
                 connection.setAutoCommit(false);
-                T result = executor.execute(connection);
                 connection.commit();
             } catch (SQLException e) {
                 connection.rollback();
