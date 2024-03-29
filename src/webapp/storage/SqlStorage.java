@@ -26,7 +26,11 @@ public class SqlStorage implements IStorage {
 
     @Override
     public void update(Resume resume) {
-        sqlHelper.transactionalExecute();
+        sqlHelper.transactionalExecute(conn -> {
+            updateResume(resume, conn);
+            updateContacts(resume, conn);
+            return null;
+        });
     }
 
     private void updateResume(Resume resume, Connection conn) throws SQLException {
@@ -50,7 +54,11 @@ public class SqlStorage implements IStorage {
 
     @Override
     public void save(Resume resume) {
-        sqlHelper.transactionalExecute();
+        sqlHelper.transactionalExecute(connection -> {
+            saveResume(resume, connection);
+            addContacts(resume, connection);
+            return null;
+        });
     }
 
     private void saveResume(Resume resume, Connection connection) throws SQLException {
