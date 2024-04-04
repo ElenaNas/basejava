@@ -1,4 +1,4 @@
-import webapp.model.SectionType;
+import resumes.model.SectionType;
 
 public class TestSingleton {
     //private static TestSingleton singleton=new TestSingleton();
