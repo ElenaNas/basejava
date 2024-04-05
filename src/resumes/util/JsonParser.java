@@ -22,4 +22,12 @@ public class JsonParser {
     public static <T> void write(T object, Writer writer) {
         GSON.toJson(object, writer);
     }
+
+    public static String write(Section section, Class<Section> sectionClass) {
+        return GSON.toJson(section, sectionClass);
+    }
+
+    public static Section read(String sectionValue, Class<Section> sectionClass) {
+        return GSON.fromJson(sectionValue, sectionClass);
+    }
 }

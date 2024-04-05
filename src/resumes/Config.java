@@ -10,27 +10,22 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
-    private static final File PROPS = new File("config\\resumes.properties");
+    private static final File PROPS = new File("C:\\Users\\nas-e\\basejava\\config\\resumes.properties");
     private static final Config INSTANCE = new Config();
 
     private final File storageDir;
-
-    public IStorage getiStorage() {
-        return iStorage;
-    }
-
-    private final IStorage iStorage;
+    private final IStorage storage;
 
     public static Config get() {
         return INSTANCE;
     }
 
     private Config() {
-        try (InputStream is = new FileInputStream(PROPS)) {
-            Properties props = new Properties();
-            props.load(is);
-            iStorage=new SqlStorage(props.getProperty("db.url"), props.getProperty( "db.user"), props.getProperty("db.password"));
-            storageDir = new File(props.getProperty("storage.dir"));
+        try (InputStream inputStream = new FileInputStream(PROPS)) {
+            Properties properties = new Properties();
+            properties.load(inputStream);
+            storageDir = new File(properties.getProperty("storage.dir"));
+            storage = new SqlStorage(properties.getProperty("db.url"), properties.getProperty("db.user"), properties.getProperty("db.password"));
         } catch (IOException e) {
             throw new IllegalStateException("Invalid config file " + PROPS.getAbsolutePath());
         }
@@ -39,4 +34,10 @@ public class Config {
     public File getStorageDir() {
         return storageDir;
     }
+
+    public IStorage getStorage() {
+        return storage;
+    }
 }
+
+
