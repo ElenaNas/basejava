@@ -1,27 +1,34 @@
 
-create table resume
+CREATE TABLE resumes
 (
-    uuid      varchar(36) not null
-        primary key,
-    full_name text        not null
+    uuid      VARCHAR(36)NOT NULL
+      PRIMARY KEY ,
+    full_name TEXT NOT NULL
 );
 
-create table contact
+CREATE TABLE contact
 (
-    id            serial,
-    contact_type  text     not null,
-    contact_value text     not null,
-    resume_uuid   char(36) not null
-        references resume
-            on delete cascade
+        id            SERIAL
+            CONSTRAINT id_contact
+            PRIMARY KEY ,
+    contact_type  TEXT NOT NULL ,
+    contact_value TEXT NOT NULL ,
+    resume_uuid   CHAR(36) NOT NULL
+       REFERENCES resume
+           ON DELETE CASCADE
 );
 
-create table section
+CREATE TABLE section
 (
-    id            serial,
-    section_type  text,
-    section_value text,
-    resume_uuid   char(36) not null
+    id            SERIAL
+        CONSTRAINT id_section
+        PRIMARY KEY ,
+    section_type  TEXT NOT NULL ,
+    section_value TEXT NOT NULL ,
+    resume_uuid  CHAR(36) NOT NULL
 );
 CREATE UNIQUE INDEX contact_uuid_type_index
     ON contact (resume_uuid, contact_type);
+
+CREATE UNIQUE INDEX section_resume_uuid_section_type_index
+    ON section (resume_uuid, section_type);
