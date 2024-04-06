@@ -36,8 +36,8 @@ public class SqlStorage implements IStorage {
     public void update(Resume resume) {
         sqlHelper.transactionalExecute(connection -> {
             updateResume(resume, connection);
-            updateContacts(resume, connection);
-            updateSections(resume, connection);
+            deleteContacts(resume, connection);
+            deleteSections(resume, connection);
             saveContacts(resume, connection);
             saveSections(resume, connection);
             return null;
@@ -142,11 +142,11 @@ public class SqlStorage implements IStorage {
         }
     }
 
-    private void updateContacts(Resume resume, Connection connection) throws SQLException {
+    private void deleteContacts(Resume resume, Connection connection) throws SQLException {
         deleteFromTable(connection, "DELETE  FROM contact WHERE resume_uuid=?", resume.getUuid());
     }
 
-    private void updateSections(Resume resume, Connection connection) throws SQLException {
+    private void deleteSections(Resume resume, Connection connection) throws SQLException {
         deleteFromTable(connection, "DELETE  FROM section WHERE resume_uuid=?", resume.getUuid());
     }
 
