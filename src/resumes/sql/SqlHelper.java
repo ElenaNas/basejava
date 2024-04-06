@@ -18,8 +18,8 @@ public class SqlHelper {
     }
 
     public <T> T execute(String sql, SqlExecutor<T> executor) {
-        try (Connection conn = connectionFactory.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (Connection connection = connectionFactory.getConnection();
+             PreparedStatement ps = connection.prepareStatement(sql)) {
             return executor.execute(ps);
         } catch (SQLException e) {
             throw ExceptionUtil.convertException(e);
