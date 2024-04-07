@@ -2,6 +2,7 @@ package resumes.util;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import resumes.model.Resume;
 import resumes.model.Section;
 
 import java.io.Reader;
@@ -23,11 +24,19 @@ public class JsonParser {
         GSON.toJson(object, writer);
     }
 
-    public static String write(Section section, Class<Section> sectionClass) {
-        return GSON.toJson(section, sectionClass);
+    public static <T>String write(T object, Class<Section> sectionClass) {
+        return GSON.toJson(object, sectionClass);
     }
 
-    public static Section read(String sectionValue, Class<Section> sectionClass) {
+    public static <T>T read(String sectionValue, Class<T> sectionClass) {
         return GSON.fromJson(sectionValue, sectionClass);
+    }
+
+    public static String write(Resume resume) {
+        return GSON.toJson(resume);
+    }
+
+    public static String write(Section section) {
+        return GSON.toJson(section);
     }
 }

@@ -111,6 +111,14 @@ public class SqlStorage implements IStorage {
                 });
     }
 
+    @Override
+    public int size() {
+        return sqlHelper.execute("SELECT COUNT(*) from resume", preparedStatement -> {
+            ResultSet resultSet = preparedStatement.executeQuery();
+            return resultSet.next() ? resultSet.getInt(1) : 0;
+        });
+    }
+
     private void addContactOrSection(ResultSet resultSet, Resume resume) throws SQLException {
         String contactType = resultSet.getString("contact_type");
         String contactValue = resultSet.getString("contact_value");
@@ -124,15 +132,7 @@ public class SqlStorage implements IStorage {
         }
     }
 
-    @Override
-    public int size() {
-        return sqlHelper.execute("SELECT COUNT(*) from resume", preparedStatement -> {
-            ResultSet resultSet = preparedStatement.executeQuery();
-            return resultSet.next() ? resultSet.getInt(1) : 0;
-        });
-    }
-
-    private static void updateResume(Resume resume, Connection connection) throws SQLException {
+    private void updateResume(Resume resume, Connection connection) throws SQLException {
         try (PreparedStatement preparedStatement = connection.prepareStatement("UPDATE resume SET full_name = ? WHERE uuid = ?")) {
             preparedStatement.setString(1, resume.getFullName());
             preparedStatement.setString(2, resume.getUuid());
