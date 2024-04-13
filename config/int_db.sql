@@ -1,9 +1,7 @@
-
-CREATE TABLE resumes
+CREATE TABLE resume
 (
-    uuid      VARCHAR(36) NOT NULL
-        PRIMARY KEY,
-    full_name TEXT        NOT NULL
+    uuid      CHAR(36) PRIMARY KEY NOT NULL,
+    full_name TEXT                 NOT NULL
 );
 
 CREATE TABLE contact
