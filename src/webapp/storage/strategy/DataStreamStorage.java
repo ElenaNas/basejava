@@ -17,13 +17,27 @@ public class DataStreamStorage implements IStreamStrategy {
             dataOutputStream.writeUTF(resume.getUuid());
             dataOutputStream.writeUTF(resume.getFullName());
 
-            writeCollection(dataOutputStream, resume.getContacts().entrySet(),
-                    (entry) -> {
-                        dataOutputStream.writeUTF(entry.getKey().name());
-                        dataOutputStream.writeUTF(entry.getValue());
-                    });
-            writeCollection(dataOutputStream, resume.getSections().entrySet(),
-                    (entry) -> writeSection(dataOutputStream, entry.getKey(), entry.getValue()));
+            if (resume.getContacts() != null) {
+                writeCollection(dataOutputStream, resume.getContacts().entrySet(),
+                        (entry) -> {
+                            try {
+                                dataOutputStream.writeUTF(entry.getKey().name());
+                                dataOutputStream.writeUTF(entry.getValue());
+                            } catch (IOException e) {
+                                throw new RuntimeException("Error writing contacts", e);
+                            }
+                        });
+            }
+            if (resume.getSections() != null) {
+                writeCollection(dataOutputStream, resume.getSections().entrySet(),
+                        (entry) -> {
+                            try {
+                                writeSection(dataOutputStream, entry.getKey(), entry.getValue());
+                            } catch (IOException e) {
+                                throw new RuntimeException("Error writing sections", e);
+                            }
+                        });
+            }
         }
     }
 
@@ -43,24 +57,26 @@ public class DataStreamStorage implements IStreamStrategy {
         switch (sectionType) {
             case PERSONAL, OBJECTIVE -> dataOutputStream.writeUTF(((TextSection) section).getText());
             case ACHIEVEMENTS, QUALIFICATIONS -> {
-                List<String> dataList = ((ListSection) section).getDataList();
+                List<String> dataList = ((webapp.model.ListSection)section).getDataList();
                 writeCollection(dataOutputStream, dataList,
                         dataOutputStream::writeUTF);
             }
             case EXPERIENCE, EDUCATION -> {
-                List<Company> companies = ((CompanySection) section).getCompanies();
-                writeCollection(dataOutputStream, companies,
-                        (company) -> {
-                            dataOutputStream.writeUTF(company.getHomePage().toString());
-                            dataOutputStream.writeUTF(getCompanyString(company));
-                            writeCollection(dataOutputStream, company.getOccupationList(),
-                                    (occupation) -> {
-                                        writeLocalDate(dataOutputStream, occupation.getFromPeriod());
-                                        writeLocalDate(dataOutputStream, occupation.getTillPeriod());
-                                        dataOutputStream.writeUTF(occupation.getJobTitle());
-                                        dataOutputStream.writeUTF(occupation.getJobDescription());
-                                    });
-                        });
+                if (section instanceof CompanySection) {
+                    List<Company> companies =  ((webapp.model.CompanySection) section).getCompanies();
+                    writeCollection(dataOutputStream, companies,
+                            (company) -> {
+                                dataOutputStream.writeUTF(company.getHomePage().toString());
+                                dataOutputStream.writeUTF(getCompanyString(company));
+                                writeCollection(dataOutputStream, company.getOccupationList(),
+                                        (occupation) -> {
+                                            writeLocalDate(dataOutputStream, occupation.getFromPeriod());
+                                            writeLocalDate(dataOutputStream, occupation.getTillPeriod());
+                                            dataOutputStream.writeUTF(occupation.getJobTitle());
+                                            dataOutputStream.writeUTF(occupation.getJobDescription());
+                                        });
+                            });
+                }
             }
         }
     }
@@ -137,4 +153,5 @@ public class DataStreamStorage implements IStreamStrategy {
         void write(T item) throws IOException;
     }
 }
+
 

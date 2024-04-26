@@ -1,45 +1,64 @@
 package webapp.model;
 
-public enum ContactType {
-    MOBILE_PHONE_NUMBER("Номер мобильного телефона"),
+import com.google.gson.annotations.Expose;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+
+@XmlAccessorType(XmlAccessType.FIELD)
+public enum ContactType {
+    @Expose
+    MOBILE_PHONE_NUMBER("Mobile Phone Number"),
+
+    @Expose
     SKYPE("Skype") {
         @Override
         public String toHtml0(String value) {
             return getTitle() + ": " + toLink("skype:" + value, value);
         }
     },
-    EMAIL("Адрес электронной почты") {
+
+    @Expose
+    EMAIL("Email") {
         @Override
         public String toHtml0(String value) {
             return getTitle() + ": " + toLink("mailto:" + value, value);
         }
     },
-    LINKEDIN_ACCOUNT("Профиль LinkedIn") {
+
+    @Expose
+    LINKEDIN_ACCOUNT("LinkedIn") {
         @Override
         public String toHtml0(String value) {
             return toLink(value);
         }
     },
-    GITHUB_ACCOUNT("Профиль GitHub") {
+
+    @Expose
+    GITHUB_ACCOUNT("GitHub") {
         @Override
         public String toHtml0(String value) {
             return toLink(value);
         }
     },
-    STACKOVERFLOW_ACCOUNT("Профиль stackoverflow") {
+
+    @Expose
+    STACKOVERFLOW_ACCOUNT("Stackoverflow") {
         @Override
         public String toHtml0(String value) {
             return toLink(value);
         }
     },
-    HOME_PAGE("Домашняя страница") {
+
+    @Expose
+    HOME_PAGE("Home page") {
         @Override
         public String toHtml0(String value) {
             return toLink(value);
         }
     };
 
+    @Expose
     private final String title;
 
     public String getTitle() {

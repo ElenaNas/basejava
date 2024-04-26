@@ -20,7 +20,6 @@ import static webapp.util.DateUtil.of;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Company extends Section implements Serializable {
-    public static final Company EMPTY = new Company("", "", Occupation.EMPTY);
 
     private static final long SERIAL_VERSION_UID = 1L;
 
@@ -28,7 +27,7 @@ public class Company extends Section implements Serializable {
     private Link homePage;
 
     @Expose
-    private List<Occupation> occupationList;
+    public List<Occupation> occupationList;
 
     public void setOccupationList(List<Occupation> occupationList) {
         this.occupationList = occupationList;
@@ -47,6 +46,9 @@ public class Company extends Section implements Serializable {
     }
 
     public List<Occupation> getOccupationList() {
+        return occupationList;
+    }
+    public Object getGetOccupationList() {
         return occupationList;
     }
 
@@ -74,9 +76,9 @@ public class Company extends Section implements Serializable {
         return Objects.hash(homePage, getOccupationList());
     }
 
+
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Occupation implements Serializable {
-        public static final Occupation EMPTY = new Occupation();
         private static final long SERIAL_VERSION_UID = 1L;
 
         @XmlJavaTypeAdapter(LocalDateXMLAdapter.class)

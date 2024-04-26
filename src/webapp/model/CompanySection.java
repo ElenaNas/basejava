@@ -2,26 +2,27 @@ package webapp.model;
 
 import com.google.gson.annotations.Expose;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class CompanySection extends Section {
     private static final long SERIAL_VERSION_UID =1L;
-
     @Expose
-    private static List<Company> companies;
+    public List<Company> companies;
 
-    public CompanySection() {
-    }
+    public CompanySection() {}
 
     public CompanySection(Company... companies) {
         this(Arrays.asList(companies));
     }
 
     public CompanySection(List<Company> companies) {
-        Objects.requireNonNull(companies, "Company can not be null");
-        CompanySection.companies = companies;
+        Objects.requireNonNull(companies, "organizations must not be null");
+        this.companies = companies;
     }
 
     public List<Company> getCompanies() {
@@ -29,21 +30,18 @@ public class CompanySection extends Section {
     }
 
     @Override
-    public String toString() {
-        return "\nCompanySection{" +
-                "\ncompanies=" + companies +
-                '}';
-    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof CompanySection that)) return false;
-        return Objects.equals(getCompanies(), that.getCompanies());
+    public boolean equals(Object obj) {
+        return super.equals(obj);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getCompanies());
+        return companies.hashCode();
     }
+
+    @Override
+    public String toString() {
+        return companies.toString();
+    }
+
 }

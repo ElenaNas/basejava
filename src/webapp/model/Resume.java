@@ -1,5 +1,7 @@
 package webapp.model;
 
+import com.google.gson.annotations.Expose;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -14,13 +16,18 @@ import java.util.UUID;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Resume  implements Comparable<Resume>, Serializable {
     @Serial
+    @Expose
     private static final long serialVersionUID = 1L;
 
+    @Expose
     private String uuid;
 
+    @Expose
     private String fullName;
 
+    @Expose
     private final Map<ContactType, String> contacts = new EnumMap<>(ContactType.class);
+    @Expose
     private final Map<SectionType, Section> sections = new EnumMap<>(SectionType.class);
 
     public Resume() {
@@ -69,8 +76,23 @@ public class Resume  implements Comparable<Resume>, Serializable {
         contacts.put(type, value);
     }
 
+    public void removeContact(ContactType type) {
+        contacts.remove(type);
+    }
+
     public void addSection(SectionType type, Section section) {
         sections.put(type, section);
+    }
+
+    public static Resume clearSections() {
+        Resume resume = new Resume();
+        resume.addSection(SectionType.OBJECTIVE, new TextSection(""));
+        resume.addSection(SectionType.PERSONAL, new TextSection(""));
+        resume.addSection(SectionType.ACHIEVEMENTS, new ListSection(""));
+        resume.addSection(SectionType.QUALIFICATIONS, new ListSection(""));
+        resume.addSection(SectionType.EXPERIENCE, new CompanySection(new Company("", "", new Company.Occupation())));
+        resume.addSection(SectionType.EDUCATION, new CompanySection(new Company("", "", new Company.Occupation())));
+        return resume;
     }
 
     @Override

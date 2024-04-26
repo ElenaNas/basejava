@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 public class PathStorage extends AbstractStorage<Path> {
 
-    private Path pathDirectory;
+    private final Path pathDirectory;
 
     IStreamStrategy iStreamStrategy;
 

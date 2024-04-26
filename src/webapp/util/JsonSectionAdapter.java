@@ -13,9 +13,8 @@ public class JsonSectionAdapter<T> implements JsonSerializer<T>, JsonDeserialize
         JsonObject jsonObject = json.getAsJsonObject();
         JsonPrimitive prim = (JsonPrimitive) jsonObject.get(CLASSNAME);
         String className = prim.getAsString();
-
         try {
-            Class clazz = Class.forName(className);
+            Class<?> clazz = Class.forName(className);
             return context.deserialize(jsonObject.get(INSTANCE), clazz);
         } catch (ClassNotFoundException e) {
             throw new JsonParseException(e.getMessage());

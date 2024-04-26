@@ -2,15 +2,18 @@ package webapp.model;
 
 import com.google.gson.annotations.Expose;
 
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+@XmlAccessorType(XmlAccessType.FIELD)
 public class ListSection extends Section {
     private static final long SERIAL_VERSION_UID =1L;
 
     @Expose
-    private List<String> dataList;
+    public List<String> dataList;
 
     public ListSection() {
     }

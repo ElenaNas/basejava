@@ -6,7 +6,7 @@ import webapp.model.Resume;
 import webapp.model.Section;
 import webapp.model.TextSection;
 
-import static webapp.storage.TestData.RESUME_1;
+import static webapp.TestData.RESUME_1;
 
 class JsonParserTest {
 

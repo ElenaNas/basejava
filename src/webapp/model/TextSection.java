@@ -9,7 +9,7 @@ import java.util.Objects;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class TextSection extends Section {
     @Expose
-    private String text;
+    public  String text;
 
     public TextSection() {
     }
@@ -18,6 +18,7 @@ public class TextSection extends Section {
         Objects.requireNonNull(text, "Text field can not be null");
         this.text = text;
     }
+
 
     public String getText() {
         return text;
@@ -41,4 +42,5 @@ public class TextSection extends Section {
     public int hashCode() {
         return Objects.hash(getText());
     }
+
 }
