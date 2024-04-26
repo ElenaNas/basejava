@@ -88,8 +88,18 @@
         width: 15%;
         margin-bottom: 10px;
     }
-</style>
+    .fixed-button {
+        position: fixed;
+        bottom: 5mm;
+        left: 5mm;
+        z-index: 999;
+    }
 
+    .fixed-button img {
+        width: 50px;
+        height: auto;
+    }
+</style>
 
 <!DOCTYPE html>
 <html>
@@ -213,6 +223,7 @@
                     </c:choose>
                 </c:forEach>
             </table>
+            <div class="fixed-button">
             <a href="javascript:void(0);" onclick="window.history.back()">
                 <img src="img/home.png" alt="Back"/>
                 Home

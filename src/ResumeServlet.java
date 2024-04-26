@@ -81,23 +81,24 @@ public class ResumeServlet extends HttpServlet {
                     switch (type) {
                         case OBJECTIVE, PERSONAL:
                             if (section == null) {
-                                section = new TextSection();
+                                section = new TextSection("");
                             }
                             break;
                         case ACHIEVEMENTS:
                         case QUALIFICATIONS:
                             if (section == null) {
-                                section = new ListSection();
+                                section = new ListSection("");
                             }
                             break;
                         case EDUCATION:
                         case EXPERIENCE:
                             CompanySection companySection = (CompanySection) section;
                             List<Company> companiesToEdit = new ArrayList<>();
+                            List<Company.Occupation> occupationsToEdit = new ArrayList<>();
+                            occupationsToEdit.add(new Company.Occupation());
                             if (section == null) {
-                                companiesToEdit.add(new Company());
+                                companiesToEdit.add(new Company("", "", new Company.Occupation()));
                             } else {
-                                List<Company.Occupation> occupationsToEdit = new ArrayList<>();
                                 for (Company company : companySection.getCompanies()) {
                                     if (company.getGetOccupationList() == null) {
                                         occupationsToEdit.add(new Company.Occupation());

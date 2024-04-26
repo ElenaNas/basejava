@@ -83,32 +83,21 @@
 
     <script>
         function validateForm() {
-            var inputs = document.querySelectorAll('.validate');
-            var isValid = true;
-
-            inputs.forEach(function (input) {
-                if (!input.value.trim()) {
-                    input.classList.add('error');
-                    isValid = false;
-                } else {
-                    input.classList.remove('error');
-                }
-
-                if (input.classList.contains('date-field1') || input.classList.contains('date-field2')) {
-                    if (!/^\d{1,2}\/\d{4}$/.test(input.value.trim())) {
-                        input.classList.add('error');
-                        isValid = false;
-                    } else {
-                        input.classList.remove('error');
-                    }
-                }
-            });
-
+            var nameInput = document.querySelector('input[name="fullName"]');
             var fromPeriodInputs = document.querySelectorAll('[name$="fromPeriod"]');
             var tillPeriodInputs = document.querySelectorAll('[name$="tillPeriod"]');
+            var isValid = true;
 
+            if (!nameInput.value.trim()) {
+                nameInput.classList.add('error');
+                isValid = false;
+            } else {
+                nameInput.classList.remove('error');
+            }
+
+            // Check fromPeriod and tillPeriod fields for digits only
             fromPeriodInputs.forEach(function (input) {
-                if (!/^\d{1,2}\/\d{4}$/.test(input.value.trim())) {
+                if (input.value.trim() && !/^\d+$/.test(input.value.trim())) {
                     input.classList.add('error');
                     isValid = false;
                 } else {
@@ -117,7 +106,7 @@
             });
 
             tillPeriodInputs.forEach(function (input) {
-                if (!/^\d{1,2}\/\d{4}$/.test(input.value.trim())) {
+                if (input.value.trim() && !/^\d+$/.test(input.value.trim())) {
                     input.classList.add('error');
                     isValid = false;
                 } else {
@@ -126,18 +115,12 @@
             });
 
             if (!isValid) {
-                alert('Please fill in all required fields with valid data.');
+                alert('Please fill in the Name field and ensure that dates contain only digits.');
+                return false;
             }
-
-            return isValid;
-        }
-
-        function resetTextArea(textarea) {
-            textarea.value = textarea.value.trim();
-            textarea.selectionStart = textarea.selectionEnd = 0;
+            return true;
         }
     </script>
-
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <link rel="stylesheet" href="css/style.css">
@@ -191,8 +174,7 @@
                         <textarea
                                 name="${type.name()}" cols="75" rows="5"
                                 placeholder="Add Your Personal Info here"
-                                onfocus="resetTextArea(this)"
-                                class="validate">
+                                onfocus="resetTextArea(this)">
                                 ${section.getText()}
                         </textarea>
                     </label>
@@ -203,8 +185,7 @@
                     <label>
                         <input type='text' name='${type.name()}' size="75"
                                value="<%=((TextSection)section).getText()%>"
-                               placeholder="Add your Career Objective here"
-                               class="validate">
+                               placeholder="Add your Career Objective here">
                     </label>
                 </c:when>
 
@@ -212,8 +193,7 @@
                     <label>
                         <textarea name="${type}" cols="75" rows="5"
                                   placeholder="Enumerate here"
-                                  onfocus="resetTextArea(this)"
-                                  class="validate">
+                                  onfocus="resetTextArea(this)">
                            <%=String.join("\n", ((ListSection) section).getDataList())%>
                         </textarea>
                     </label>
@@ -226,8 +206,7 @@
                             <dt>Company Name:</dt>
                             <dd><label>
                                 <input type="text" name="${type}" size="20" value="${company.homePage.name}"
-                                       placeholder="Add Company Name here"
-                                       class="validate">
+                                       placeholder="Add Company Name here">
                             </label></dd>
                         </dl>
 
@@ -235,8 +214,7 @@
                             <dt>Company website:</dt>
                             <dd><label>
                                 <input type="text" name="${type}url" size="20" value="${company.homePage.url}"
-                                       placeholder="Add website here"
-                                       class="validate">
+                                       placeholder="Add website here">
                             </label></dd>
                         </dl>
 
@@ -247,8 +225,7 @@
                                 <label>Since:
                                     <input type="text" name="${type}${counter.index}fromPeriod" size="10"
                                            value="<%=DateUtil.format(occupation.getFromPeriod())%>"
-                                           placeholder="MM/yyyy"
-                                           class="validate">
+                                           placeholder="MM/yyyy">
                                 </label>
                             </div>
 
@@ -256,8 +233,7 @@
                                 <label>Until:
                                     <input type="text" name="${type}${counter.index}tillPeriod" size="10"
                                            value="<%=DateUtil.format(occupation.getTillPeriod())%>"
-                                           placeholder="MM/yyyy"
-                                           class="validate">
+                                           placeholder="MM/yyyy">
                                 </label>
                             </div>
 
@@ -268,8 +244,7 @@
                                            name="${type}${counter.index}jobTitle"
                                            size="20"
                                            value="<c:if test="${not empty occupation.jobTitle}"><%=occupation.getJobTitle()%></c:if>"
-                                           placeholder="Add Title here"
-                                           class="validate">
+                                           placeholder="Add Title here">
                                 </label>
                                 </dd>
                             </dl>
@@ -282,8 +257,7 @@
                                                   id="${type.name()}${counter.index}jobDescription"
                                                   cols="75" rows="5"
                                                   placeholder="Add Description here"
-                                                  onfocus="resetTextArea(this)"
-                                                  class="validate">
+                                                  onfocus="resetTextArea(this)">
                                             <c:if test="${not empty occupation.jobDescription}">
                                                 ${occupation.getJobDescription().trim()}
                                             </c:if>
