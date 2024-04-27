@@ -136,18 +136,26 @@ public class ResumeServlet extends HttpServlet {
 
     private void updateSections(HttpServletRequest request, Resume resume) {
         for (SectionType type : SectionType.values()) {
+            String value = request.getParameter(type.name());
             String[] values = request.getParameterValues(type.name());
-            if (values == null || values.length < 2) {
+            if (value == null || value.trim().isEmpty() && (values.length < 2)) {
                 resume.getSections().remove(type);
             } else {
                 switch (type) {
                     case PERSONAL:
                     case OBJECTIVE:
-                        resume.addSection(type, new TextSection(values[0]));
+                        resume.addSection(type, new TextSection(value));
                         break;
                     case ACHIEVEMENTS:
                     case QUALIFICATIONS:
-                        resume.addSection(type, new ListSection(values));
+                        String[] lines = value.split("\\n");
+                        List<String> nonEmptyLines = new ArrayList<>();
+                        for (String line : lines) {
+                            if (!line.trim().isEmpty()) {
+                                nonEmptyLines.add(line.trim());
+                            }
+                        }
+                        resume.addSection(type, new ListSection(nonEmptyLines));
                         break;
                     case EDUCATION:
                     case EXPERIENCE:

@@ -1,5 +1,6 @@
 package webapp.storage;
 
+import com.google.gson.annotations.Expose;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import webapp.Config;
@@ -21,14 +22,12 @@ public abstract class AbstractStorageTest {
     //protected static final File STORAGE_DIRECTORY = new File("C:\\Users\\nas-e\\basejava\\src\\webapp\\storageSer");
     protected static final File STORAGE_DIRECTORY = Config.get().getStorageDir();
 
+    @Expose
     protected IStorage storage;
 
     public AbstractStorageTest(IStorage storage) {
         this.storage = storage;
     }
-
-    private static final Resume UUID_NOT_EXIST = new Resume("UUID_5", "dummy");
-    private static final int INITIAL_SIZE = 3;
 
     @BeforeEach
     void setUp() throws StorageException {

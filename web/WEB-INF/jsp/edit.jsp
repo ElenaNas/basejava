@@ -84,8 +84,6 @@
     <script>
         function validateForm() {
             var nameInput = document.querySelector('input[name="fullName"]');
-            var fromPeriodInputs = document.querySelectorAll('[name$="fromPeriod"]');
-            var tillPeriodInputs = document.querySelectorAll('[name$="tillPeriod"]');
             var isValid = true;
 
             if (!nameInput.value.trim()) {
@@ -95,31 +93,13 @@
                 nameInput.classList.remove('error');
             }
 
-            // Check fromPeriod and tillPeriod fields for digits only
-            fromPeriodInputs.forEach(function (input) {
-                if (input.value.trim() && !/^\d+$/.test(input.value.trim())) {
-                    input.classList.add('error');
-                    isValid = false;
-                } else {
-                    input.classList.remove('error');
-                }
-            });
-
-            tillPeriodInputs.forEach(function (input) {
-                if (input.value.trim() && !/^\d+$/.test(input.value.trim())) {
-                    input.classList.add('error');
-                    isValid = false;
-                } else {
-                    input.classList.remove('error');
-                }
-            });
-
             if (!isValid) {
-                alert('Please fill in the Name field and ensure that dates contain only digits.');
+                alert('Please fill in the Name field.');
                 return false;
             }
             return true;
         }
+
     </script>
 
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
@@ -173,8 +153,7 @@
                     <label>
                         <textarea
                                 name="${type.name()}" cols="75" rows="5"
-                                placeholder="Add Your Personal Info here"
-                                onfocus="resetTextArea(this)">
+                                placeholder="Add Your Personal Info here">
                                 ${section.getText()}
                         </textarea>
                     </label>
@@ -192,8 +171,7 @@
                 <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENTS'}">
                     <label>
                         <textarea name="${type}" cols="75" rows="5"
-                                  placeholder="Enumerate here"
-                                  onfocus="resetTextArea(this)">
+                                  placeholder="Enumerate here">
                            <%=String.join("\n", ((ListSection) section).getDataList())%>
                         </textarea>
                     </label>
@@ -256,8 +234,7 @@
                                         <textarea name="${type.name()}${counter.index}jobDescription"
                                                   id="${type.name()}${counter.index}jobDescription"
                                                   cols="75" rows="5"
-                                                  placeholder="Add Description here"
-                                                  onfocus="resetTextArea(this)">
+                                                  placeholder="Add Description here">
                                             <c:if test="${not empty occupation.jobDescription}">
                                                 ${occupation.getJobDescription().trim()}
                                             </c:if>
