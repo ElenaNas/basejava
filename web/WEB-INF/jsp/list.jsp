@@ -23,13 +23,22 @@
 
     table {
         width: 100%;
-        margin-top: 20px;
     }
 
     .add-cv-button {
         margin-bottom: 20px;
     }
 
+    .action-icons {
+        width: 25px;
+        height: 25px;
+    }
+
+    .resume-table-container {
+        max-height: 300px;
+        overflow-y: hidden;
+        margin-top: 20px;
+    }
 </style>
 
 <html>
@@ -44,31 +53,43 @@
 <jsp:include page="/WEB-INF/jsp/fragments/header.jsp"/>
 <section>
     <a href="resume?action=add" class="add-cv-button"><img src="img/add_new_CV.png" class="action-icons">Add new CV</a>
-    <table border="1" cellpadding="8" cellspacing="0">
-        <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th></th>
-            <th></th>
-        </tr>
-        <c:forEach items="${resumes}" var="resume">
-            <jsp:useBean id="resume" type="webapp.model.Resume"/>
+    <div class="resume-table-container">
+        <table border="1" cellpadding="8" cellspacing="0">
             <tr>
-            <tr>
-                <td><a href="resume?uuid=${resume.uuid}&action=view">${resume.fullName}</a></td>
-                <td><%=ContactType.EMAIL.toHtml(resume.getContact(ContactType.EMAIL))%>
-                </td>
-                <td><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png"
-                                                                            class="action-icons"></a></td>
-                <td><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png" class="action-icons"></a>
-                </td>
+                <th>Name</th>
+                <th>Email</th>
+                <th></th>
+                <th></th>
             </tr>
-        </c:forEach>
-    </table>
+            <c:forEach items="${resumes}" var="resume">
+                <jsp:useBean id="resume" type="webapp.model.Resume"/>
+                <tr>
+                    <td><a href="resume?uuid=${resume.uuid}&action=view">${resume.fullName}</a></td>
+                    <td><%=ContactType.EMAIL.toHtml(resume.getContact(ContactType.EMAIL))%>
+                    </td>
+                    <td><a href="resume?uuid=${resume.uuid}&action=delete"><img src="img/delete.png"
+                                                                                class="action-icons"></a></td>
+                    <td><a href="resume?uuid=${resume.uuid}&action=edit"><img src="img/pencil.png"
+                                                                              class="action-icons"></a>
+                    </td>
+                </tr>
+            </c:forEach>
+        </table>
+    </div>
 </section>
 <div class="footer_C">
     <p>&copy; 2024 ElenaNasikovskaia</p>
 </div>
 <jsp:include page="/WEB-INF/jsp/fragments/footer.jsp"/>
+
+<script>
+    var numberOfResumes = ${resumes.size()};
+    if (numberOfResumes > 8) {
+        var resumeTableContainer = document.querySelector('.resume-table-container');
+        resumeTableContainer.style.overflowY = 'auto';
+    }
+</script>
+
 </body>
 </html>
+

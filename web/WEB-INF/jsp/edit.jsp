@@ -150,15 +150,9 @@
             <c:choose>
 
                 <c:when test="${type=='PERSONAL'}">
-                    <label>
-                        <textarea
-                                name="${type.name()}" cols="75" rows="5"
-                                placeholder="Add Your Personal Info here">
-                                ${section.getText()}
-                        </textarea>
+                    <label><textarea name="${type}" cols="75" rows="5" placeholder="Add Your Personal Info here">${section.getText()}</textarea>
                     </label>
                 </c:when>
-
 
                 <c:when test="${type=='OBJECTIVE'}">
                     <label>
@@ -170,10 +164,7 @@
 
                 <c:when test="${type=='QUALIFICATIONS' || type=='ACHIEVEMENTS'}">
                     <label>
-                        <textarea name="${type}" cols="75" rows="5"
-                                  placeholder="Enumerate here">
-                           <%=String.join("\n", ((ListSection) section).getDataList())%>
-                        </textarea>
+                        <textarea name="${type}" cols="75" rows="5" placeholder="Enumerate here"><%=String.join("\n", ((ListSection) section).getDataList())%></textarea>
                     </label>
                 </c:when>
 
@@ -203,7 +194,7 @@
                                 <label>Since:
                                     <input type="text" name="${type}${counter.index}fromPeriod" size="10"
                                            value="<%=DateUtil.format(occupation.getFromPeriod())%>"
-                                           placeholder="MM/yyyy">
+                                           placeholder="dd/MM/yyyy">
                                 </label>
                             </div>
 
@@ -211,7 +202,7 @@
                                 <label>Until:
                                     <input type="text" name="${type}${counter.index}tillPeriod" size="10"
                                            value="<%=DateUtil.format(occupation.getTillPeriod())%>"
-                                           placeholder="MM/yyyy">
+                                           placeholder="dd/MM/yyyy">
                                 </label>
                             </div>
 
@@ -232,13 +223,9 @@
                                 <dd>
                                     <label>
                                         <textarea name="${type.name()}${counter.index}jobDescription"
-                                                  id="${type.name()}${counter.index}jobDescription"
-                                                  cols="75" rows="5"
-                                                  placeholder="Add Description here">
-                                            <c:if test="${not empty occupation.jobDescription}">
-                                                ${occupation.getJobDescription().trim()}
-                                            </c:if>
-                                        </textarea>
+                                                  id="${type.name()}${counter.index}jobDescription" cols="75" rows="5"
+                                                  placeholder="Add Description here"><c:if
+                                                test="${not empty occupation.jobDescription}">${occupation.getJobDescription().trim()}</c:if></textarea>
                                     </label>
                                 </dd>
                             </dl>

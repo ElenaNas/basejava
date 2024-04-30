@@ -3,6 +3,9 @@
 <%@ page import="webapp.model.TextSection" %>
 <%@ page import="webapp.model.ListSection" %>
 <%@ page import="webapp.model.CompanySection" %>
+<%@ page import="webapp.util.DateUtil" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="webapp.model.Company" %>
 <style>
     .header {
         display: flex;
@@ -203,17 +206,28 @@
                                     <jsp:useBean id="occupation" type="webapp.model.Company.Occupation"/>
                                     <tr>
                                         <td class="occupation-dates">
-                                            <div style="text-align: center; margin-left: 11px;">${occupation.fromPeriod}
-                                                -
+                                            <div style="text-align: center; margin-left: 11px;">${DateUtil.format(occupation.fromPeriod)} -</div>
+                                            <div style="text-align: center;">
+                                                <%
+                                                    String tillPeriod = DateUtil.format(occupation.getTillPeriod());
+                                                    LocalDate now = LocalDate.now();
+                                                    boolean isEmptyOrNull = "Until now".equals(tillPeriod) || DateUtil.NOW.equals(occupation.getTillPeriod()) || now.equals(occupation.getTillPeriod()) || (occupation.getTillPeriod().isAfter(LocalDate.now()));
+                                                    if (isEmptyOrNull) {
+                                                %>
+                                                Until now
+                                                <%
+                                                } else {
+                                                %>
+                                                <div style="text-align: center;">${DateUtil.format(occupation.tillPeriod)}</div>
+                                                <%
+                                                    }
+                                                %>
                                             </div>
-                                            <div style="text-align: center;">${occupation.tillPeriod}</div>
                                         </td>
                                         <td class="occupation-details">
-                                            <div style="text-align: center; font-size: 18px; font-weight: bold;">
-                                                    ${occupation.jobTitle}</div>
-                                            <br>
                                             <div style="text-align: left;">
-                                                    ${occupation.jobDescription}</div>
+                                                    ${occupation.jobDescription}
+                                            </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
@@ -228,7 +242,7 @@
                 <img src="img/home.png" alt="Back"/>
                 Home
             </a>
-
+            </div>
         </section>
     </div>
 </div>

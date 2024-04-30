@@ -9,11 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.YearMonth;
 import java.util.ArrayList;
 import java.util.List;
 
 import static webapp.util.DateUtil.DATE_FORMATTER;
+import static webapp.util.DateUtil.NOW;
 
 public class ResumeServlet extends HttpServlet {
     IStorage storage;
@@ -136,7 +136,7 @@ public class ResumeServlet extends HttpServlet {
 
     private void updateSections(HttpServletRequest request, Resume resume) {
         for (SectionType type : SectionType.values()) {
-            String value = request.getParameter(type.name());
+            String value = request.getParameter(type.name().trim());
             String[] values = request.getParameterValues(type.name());
             if (value == null || value.trim().isEmpty() && (values.length < 2)) {
                 resume.getSections().remove(type);
@@ -189,26 +189,44 @@ public class ResumeServlet extends HttpServlet {
         String[] titles = request.getParameterValues(type.name() + index + "jobTitle");
         String[] descriptions = request.getParameterValues(type.name() + index + "jobDescription");
 
-        for (int j = 0; j < titles.length; j++) {
+        int length = Math.min(Math.min(startDates.length, endDates.length), Math.min(titles.length, descriptions.length));
+
+        for (int j = 0; j < length; j++) {
             try {
-                if (titles[j] != null && !titles[j].trim().isEmpty()) {
-                    LocalDate startDate = parseDate(startDates[j]);
-                    LocalDate endDate = parseDate(endDates[j]);
-                    occupations.add(new Company.Occupation(startDate, endDate, titles[j], descriptions[j]));
+                String title = titles[j].trim();
+                String description = descriptions[j].trim();
+                String startDateStr = startDates[j].trim();
+                String endDateStr = endDates[j].trim();
+
+                if (title.isEmpty()) {
+                    continue;
+                }
+
+                if (!startDateStr.isEmpty()) {
+                    LocalDate startDate = parseDate(startDateStr);
+                    LocalDate endDate = parseDate(endDateStr);
+                    occupations.add(new Company.Occupation(startDate, endDate, title, description));
                 }
             } catch (Exception e) {
-                System.out.println("Date is not valid");
+                System.out.println("Error parsing occupation: " + e.getMessage());
             }
         }
+
         return occupations;
     }
 
-    private LocalDate parseDate(String dateStr) {
-        if (dateStr == null || dateStr.trim().isEmpty() || "Present Day".equals(dateStr)) {
-            return LocalDate.now();
+    public static LocalDate parseDate(String dateString) {
+        if (dateString == null || dateString.trim().isEmpty()) {
+            return NOW;
+        } else if ("Until now".equals(dateString)) {
+            return NOW;
         } else {
-            YearMonth yearMonth = YearMonth.parse(dateStr, DATE_FORMATTER);
-            return LocalDate.of(yearMonth.getYear(), yearMonth.getMonth(), 1);
+            LocalDate date = LocalDate.parse(dateString, DATE_FORMATTER);
+            if (date.isAfter(NOW) || date.equals(NOW)) {
+                return NOW;
+            } else {
+                return date;
+            }
         }
     }
 }
