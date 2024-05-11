@@ -225,12 +225,14 @@
                                             </div>
                                         </td>
                                         <td class="occupation-details">
+                                            <div style="text-align: center; margin-bottom: 10px;">${occupation.jobTitle}</div>
                                             <div style="text-align: left;">
                                                     ${occupation.jobDescription}
                                             </div>
                                         </td>
                                     </tr>
                                 </c:forEach>
+
 
                             </c:forEach>
                         </c:when>
